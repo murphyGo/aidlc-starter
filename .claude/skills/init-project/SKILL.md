@@ -421,6 +421,9 @@ Generate project root `CLAUDE.md`:
 
 **Always check `docs/development-plan.md` before starting any work.**
 
+- If your task exists in the plan → Follow the established workflow
+- If your task does NOT exist → Update `docs/development-plan.md` first to add your task
+
 Run `/dev-{name}` to:
 1. See current development status
 2. Get the next task to work on
