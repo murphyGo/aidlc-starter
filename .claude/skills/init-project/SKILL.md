@@ -345,12 +345,12 @@ Wait for AI-DLC to complete before proceeding to Stage 2.
 
 Create `.claude/skills/dev-{project}/SKILL.md`:
 
-- Use `dev-ai-report` or `dev-event-receiver` as template
+- Use `docs/references/dev-skill-template.md` as template
 - Customize for:
-  - Project name and paths
-  - Tech stack (Go vs Python vs TypeScript)
-  - Test commands
-  - Build commands
+  - Project name (replace `{Project Name}` and `{project}`)
+  - Tech stack specific commands (test, build, lint)
+  - Language-specific best practices section
+  - Project-specific file paths
 
 ### Step 10: Copy Common Skills
 

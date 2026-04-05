@@ -346,12 +346,14 @@ Ready to proceed with these enhancements, or would you like to discuss further?
 
 ## Dev Skills Reference
 
-These skills should be referenced to create general dev skills templates for use at the start of all projects.
-Actual projects will start with this template and modify as needed.
+The dev skill template is included in this repository:
 
-- /Users/user/Desktop/Projects/grin-services/.claude/skills
-- /Users/user/Desktop/Projects/ai-report/.claude/skills
-- /Users/user/Desktop/Projects/crypto-master/.claude/skills
+- `docs/references/dev-skill-template.md` - Generic development skill template
+
+When `/init-project` runs Stage 2 (Skill Generation), it uses this template to create a project-specific `/dev-{project}` skill customized for:
+- Project name and paths
+- Tech stack specific commands
+- Language-specific best practices
 
 ---
 
