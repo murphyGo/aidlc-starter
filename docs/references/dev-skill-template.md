@@ -42,9 +42,12 @@ Automatic status check before starting development:
      ```
      📋 Phase Review Pending
 
-     Phase 1 is complete but no cross-check document exists.
+     Phase [N] is complete but has no cross-check document.
      Run cross-check now? (yes/no/later)
      ```
+   - **yes**: Execute `/cross-check` for the unchecked phase before proceeding to development
+   - **no**: Skip cross-check and proceed directly to next development target
+   - **later**: Acknowledge and proceed, but remind again at next invocation
 
 **Note**: Health check alerts are informational. You can proceed with "yes" or address issues first.
 
@@ -127,9 +130,61 @@ After user approval:
 
 After successful implementation:
 
-**5.1 Code Review** (Automatic):
-- Run `/code-review git` on changed files
-- If Critical/High issues found, fix before proceeding or document in TECH-DEBT
+**5.1 Code Review** (delegated to separate agent for fresh-eyes analysis):
+
+Delegate code review to a **separate agent** using the Agent tool. This avoids confirmation bias — the reviewer reads the code without knowing the author's intent.
+
+```
+Agent(subagent_type="general-purpose", prompt="""
+You are reviewing {PRIMARY_LANGUAGE} code for the {Project Name} project.
+
+## Files to Review
+[list changed source files from `git diff --name-only HEAD` + `git diff --name-only --cached`]
+
+## Review Focus (priority order)
+1. Correctness — logic bugs, edge cases, spec non-compliance
+2. Safety — resource leaks, concurrency bugs, security, data loss risks
+3. Reliability — error handling quality, failure scenarios
+4. Maintainability — unnecessary complexity, unclear naming
+
+## Project-Specific Rules
+{PROJECT_SPECIFIC_RULES}
+
+## Output Format
+Generate a code review report with:
+1. Summary table (Correctness/Safety/Reliability/Maintainability/Test Coverage × Pass/Warn/Fail)
+2. Issues detail grouped by severity (Critical/High → Medium → Low)
+   - Each issue: File:Line, Category, Issue description, Concrete fix suggestion
+3. Self-review checklist with evidence
+4. TECH-DEBT candidates if any
+
+Read each file fully. Understand what the code does, then analyze.
+Do NOT just pattern-match — reason about the code's behavior.
+""")
+```
+
+After receiving the agent's report:
+- If 🔴 Critical/High issues found, fix before proceeding or document in TECH-DEBT
+- If ⚠️ Medium severity issues found, propose as improvement items:
+  ```
+  ### Code Review Improvement Suggestions
+
+  The following issues were found during code review.
+  Would you like to address them now or add to the development plan?
+
+  | # | Severity | Issue | Suggested Action |
+  |---|----------|-------|------------------|
+  | 1 | ⚠️ Medium | [issue description] | [concrete fix suggestion] |
+  | 2 | ⚠️ Medium | [issue description] | [concrete fix suggestion] |
+
+  Options:
+  - fix: Address now before proceeding
+  - plan: Add as sub-task to development plan
+  - skip: Acknowledge and continue
+  ```
+  - **fix**: Implement the fix immediately, re-run tests, update the code review results
+  - **plan**: Add a new sub-task to `development-plan.md` under the current phase with the improvement description
+  - **skip**: Document in session log as "Acknowledged, not addressed" with rationale
 
 **5.2 Create Session Log** (`docs/sessions/YYYY-MM-DD-<phase>-<task>.md`):
 
@@ -204,28 +259,30 @@ After documentation:
    - If additional needs discovered during implementation, suggest new sub-task
    - Format: "Suggested addition to Phase X: [description]"
 
-4. **Phase Completion Auto-Action** (if Phase just completed):
-   - Detect: All sub-tasks in current Phase are `[x]`
-   - Trigger automatic cross-check:
+4. **Phase Completion Auto-Actions** (if Phase just completed):
+   - Detect: All sub-tasks in current Phase are now `[x]`
+   - Prompt user for cross-check:
      ```
      🎉 Phase [N] Complete!
 
-     All sub-tasks in Phase [N] are complete.
-     Running automatic cross-check against requirements...
+     All sub-tasks in Phase [N] are now complete.
+     Run cross-check against specs now? (yes/no/later)
      ```
-   - Execute `/cross-check` logic inline:
-     - Verify implementation vs requirements
+   - **yes**: Execute `/cross-check` for the completed phase:
+     - Verify implementation vs specs
      - Generate compliance matrix
      - Create `docs/cross-checks/phase-N-[name].md`
-   - Report found gaps:
-     ```
-     Cross-Check Results:
-     - ✅ Complete: X requirements
-     - ⚠️ Partial: Y requirements
-     - ❌ Gap: Z requirements
+     - Report any gaps found:
+       ```
+       Cross-Check Results:
+       - ✅ Complete: X requirements
+       - ⚠️ Partial: Y requirements
+       - ❌ Gap: Z requirements
 
-     [If gaps exist] Add gap items to next Phase? (yes/no)
-     ```
+       [If gaps] Add gap items to next phase? (yes/no)
+       ```
+   - **no**: Skip cross-check, proceed to summary
+   - **later**: Skip for now, but flag in Step 0 health check on next invocation
 
 ### Step 7: Summary Report
 

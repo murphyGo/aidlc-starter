@@ -22,7 +22,7 @@ Automatically analyze code for quality issues, security vulnerabilities, and bes
 
 ## Objective
 
-Verify code quality for this {PRIMARY_LANGUAGE}/{FRAMEWORK} project by analyzing source code for common issues, security vulnerabilities, and best practices violations.
+Find real issues in code by reading and understanding it deeply — not by pattern-matching against a checklist.
 
 ---
 
@@ -72,51 +72,31 @@ git diff --name-only --cached
 - Detect language from extensions
 - Separate test files
 
-### Step 2: Detect Language and Apply Rules
+### Step 2: Read and Understand Code
 
-| Extension | Language | Specialized Checks |
-|-----------|----------|-------------------|
-| `.go` | Go | Error handling, goroutines, defer |
-| `.py` | Python | Type hints, exception handling |
-| `.ts`, `.tsx` | TypeScript | Types, null checks, async/await |
-| `.js`, `.jsx` | JavaScript | Null checks, async/await |
-| `.rs` | Rust | Ownership, lifetimes, unwrap |
-| `.java` | Java | Null checks, resources, exceptions |
+Read each file fully. Understand:
+- What the code does and why
+- How it interacts with other components
+- What invariants it maintains
+- What happens when things go wrong
 
-### Step 3: Universal Checks (All Languages)
+### Step 3: Review with Focus Areas
 
-#### 3.1 Error Handling
-| Pattern | Issue | Severity |
-|---------|-------|----------|
-| Caught error not logged/handled | Swallowed error | High |
-| Generic catch-all exception | Loss of context | Medium |
-| Error not propagated | Silent failure | High |
+Analyze the code from these perspectives, in priority order:
 
-#### 3.2 Security
-| Pattern | Issue | Severity |
-|---------|-------|----------|
-| Hardcoded password/secret/key | Credential exposure | Critical |
-| SQL string concatenation | SQL injection risk | Critical |
-| User input in shell command | Command injection | Critical |
-| Weak random (non-crypto) | Predictable values | High |
-| Disabled SSL verification | MITM vulnerability | Critical |
+1. **Correctness** — Logic bugs, edge cases, spec non-compliance, off-by-one errors, nil/empty handling
+2. **Safety** — Resource leaks, concurrency bugs, security vulnerabilities, data loss risks
+3. **Reliability** — Error handling quality, failure scenarios, graceful degradation
+4. **Maintainability** — Unnecessary complexity, unclear naming, missing abstractions (or over-abstraction)
 
-#### 3.3 Resource Management
-| Pattern | Issue | Severity |
-|---------|-------|----------|
-| File opened without close | Resource leak | High |
-| Connection without cleanup | Resource leak | High |
-| Lock without unlock | Deadlock risk | Critical |
+#### Project-Specific Rules
+{PROJECT_SPECIFIC_RULES}
 
-#### 3.4 Code Quality
-| Pattern | Issue | Severity |
-|---------|-------|----------|
-| TODO/FIXME without tracking | Untracked work | Low |
-| Debug print statements | Debug code left in | Low |
-| Magic numbers | Unexplained literals | Low |
-| Commented-out code blocks | Dead code | Low |
+### Step 4: Language & Framework Reference
 
-### Step 4: Language-Specific Checks
+Consult these language and framework-specific patterns during review.
+
+#### 4.1 Language-Specific Checks
 
 #### Go
 | Pattern | Issue | Severity |
@@ -142,7 +122,7 @@ git diff --name-only --cached
 | Unhandled promise rejection | Silent failure | High |
 | `==` instead of `===` | Type coercion bug | Medium |
 
-### Step 4.5: Framework-Specific Checks
+#### 4.2 Framework-Specific Checks
 
 {FRAMEWORK_SECTION}
 
@@ -305,10 +285,10 @@ For each new/modified function:
 
 | Category | ✅ Pass | ⚠️ Warn | 🔴 Fail |
 |----------|---------|---------|---------|
-| Error Handling | X | Y | Z |
-| Security | X | Y | Z |
-| Resource Management | X | Y | Z |
-| Code Quality | X | Y | Z |
+| Correctness | X | Y | Z |
+| Safety | X | Y | Z |
+| Reliability | X | Y | Z |
+| Maintainability | X | Y | Z |
 | Test Coverage | X | Y | Z |
 | **Total** | **X** | **Y** | **Z** |
 
@@ -342,33 +322,23 @@ For each new/modified function:
 
 | Item | Status | Evidence |
 |------|--------|----------|
-| All errors handled appropriately | ⚠️ | 2 unhandled errors found |
-| No hardcoded secrets | ✅ | None detected |
-| Resources properly cleaned up | ✅ | All files use context managers |
-| No obvious security issues | ✅ | No injection risks found |
-| Test coverage adequate | ⚠️ | 1 function untested |
+| No logic bugs or edge case gaps | ✅/⚠️/🔴 | [brief evidence] |
+| Resources properly cleaned up | ✅/⚠️/🔴 | [brief evidence] |
+| Concurrency is safe | ✅/⚠️/🔴 | [brief evidence] |
+| No hardcoded secrets | ✅/⚠️/🔴 | [brief evidence] |
+| Errors handled with context | ✅/⚠️/🔴 | [brief evidence] |
+| Failure scenarios covered | ✅/⚠️/🔴 | [brief evidence] |
+| Unit tests cover key paths | ✅/⚠️/🔴 | [brief evidence] |
 
 ---
 
 ### TECH-DEBT Candidates
 
-Issues that should be tracked:
+Issues that should be tracked as technical debt:
 
-```markdown
-### DEBT-XXX: Generic exception handling in db.py
-
-**Category**: Reliability
-**Priority**: Medium
-**Location**: `src/db.py:78,92`
-
-**Description**:
-2 bare except clauses catching all exceptions.
-
-**Remediation**:
-Catch specific exceptions (ConnectionError, TimeoutError).
-
-**Estimated Effort**: 30 minutes
-```
+| DEBT ID | Priority | Location | Description | Effort |
+|---------|----------|----------|-------------|--------|
+| DEBT-XXX | Medium | `file.py:78` | [description] | 15 min |
 
 Add to TECH-DEBT.md? (yes/no)
 ```
