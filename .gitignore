@@ -1,0 +1,75 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Go
+vendor/
+*.test
+*.out
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Model artifacts
+*.onnx
+*.pkl
+*.pt
+*.bin
+*.h5
+models/
+
+# Data
+data/
+*.csv
+*.parquet
+*.jsonl
+!aidlc-docs/**/*.jsonl
+
+# Logs
+logs/
+*.log
+
+# Google Docs
+*.gdoc
+*.gsheet
+*.gslides
+*.gdraw
+
+# Temp
+tmp/
+temp/
+.tmp/
+
+# Obsidian
+.obsidian/

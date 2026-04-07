@@ -12,6 +12,26 @@ Execute one sub-task at a time from the development plan to incrementally build 
 
 ---
 
+## AIDLC Construction Integration
+
+This skill operates within the AIDLC Construction phase. Before executing tasks, it references the project's AI-DLC artifacts to ensure alignment:
+
+- **Execution plan**: `aidlc-docs/inception/plans/execution-plan.md` — defines which construction stages apply
+- **Application design**: `aidlc-docs/inception/application-design/` — component definitions, dependencies, services
+- **Requirements reference**: `aidlc-docs/inception/requirements/requirements.md` → `docs/requirements.md`
+- **Unit definitions**: `aidlc-docs/inception/application-design/unit-of-work.md` (if units were generated)
+
+### AIDLC Construction Stages Awareness
+
+The development plan includes an "AIDLC Construction Stages" table. When the execution plan specifies stages like Functional Design or NFR Requirements, the dev skill should:
+
+1. **Before Code Generation tasks**: Check if the execution plan requires design stages (Functional Design, NFR Requirements, NFR Design, Infrastructure Design) for the current unit
+2. **If design stages apply but haven't been completed**: Guide the user through the relevant AIDLC construction stage rules (from `aidlc-workflows/aidlc-rules/aws-aidlc-rule-details/construction/`) before writing code
+3. **If design stages are marked N/A**: Proceed directly to implementation
+4. **Extension enforcement**: If extensions are enabled in `aidlc-docs/aidlc-state.md`, check applicable rules at each stage
+
+---
+
 ## Execution Steps
 
 ### Step 0: Health Check (Automatic)
@@ -58,22 +78,30 @@ Automatic status check before starting development:
    - `docs/TECH-DEBT.md`
    - `docs/requirements.md`
    - `CLAUDE.md`
-   - `DESIGN.md`
+   - `docs/DESIGN.md`
+   - `aidlc-docs/aidlc-state.md` (AI-DLC state tracking)
+   - `aidlc-docs/inception/plans/execution-plan.md` (construction stage decisions)
 
 ### Step 2: Analyze Development Plan
 
 1. **Read**: `docs/development-plan.md`
 
-2. **Parse Plan**:
+2. **Read AIDLC context** (if exists):
+   - `aidlc-docs/inception/plans/execution-plan.md` — check which construction stages apply
+   - `aidlc-docs/aidlc-state.md` — current state, enabled extensions
+
+3. **Parse Plan**:
+   - AIDLC Construction Stages table (which stages apply to this project)
    - Current status table (component completion status)
    - All Phases and sub-tasks
    - Checkbox status: `[x]` = complete, `[ ]` = incomplete
 
-3. **Find Next Development Target** (scan top to bottom):
+4. **Find Next Development Target** (scan top to bottom):
    - Skip fully checked `[x]` Phases/sub-tasks
    - Skip items marked "deferred" or "— *deferred*"
    - Select **first sub-task** with at least one unchecked `[ ]` item
    - For mixed-status sub-tasks, target only unchecked items
+   - **AIDLC check**: If the target task requires a construction design stage (Functional Design, NFR, etc.) per the execution plan, and that stage hasn't been completed for the relevant unit, prompt the user to complete it first
 
 ### Step 3: Present Development Target
 
@@ -111,7 +139,11 @@ After user approval:
 
 2. **Research Phase**:
    - Read related requirements from `docs/requirements.md`
-   - Check design patterns in `DESIGN.md`
+   - Check design patterns in `docs/DESIGN.md`
+   - Read AIDLC design artifacts (if they exist for this unit):
+     - `aidlc-docs/construction/{unit-name}/functional-design/` — business logic, domain entities
+     - `aidlc-docs/construction/{unit-name}/nfr-design/` — NFR patterns, logical components
+     - `aidlc-docs/inception/application-design/` — component definitions, services, dependencies
    - Explore existing codebase for patterns and dependencies
 
 3. **Write Implementation Plan**:

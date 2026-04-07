@@ -22,13 +22,18 @@ Systematically verify that implementations align with documented requirements, i
 ### Step 1: Locate Requirements
 
 1. **Search for requirements documents**:
-   - `docs/requirements.md` (primary)
-   - `aidlc-docs/inception/requirements/requirements.md`
+   - `docs/requirements.md` (primary — single source of truth)
+   - `aidlc-docs/inception/requirements/requirements.md` (reference with intent analysis)
 
-2. **Search for development plan**:
+2. **Search for AIDLC design artifacts** (for traceability):
+   - `aidlc-docs/inception/user-stories/stories.md` (if exists — verify story coverage)
+   - `aidlc-docs/inception/application-design/components.md` (if exists — verify component coverage)
+   - `aidlc-docs/inception/plans/execution-plan.md` (verify planned stages were completed)
+
+3. **Search for development plan**:
    - `docs/development-plan.md`
 
-3. **If not found**, report error and suggest running `/init-project`
+4. **If not found**, report error and suggest running `/init-project`
 
 ### Step 2: Parse Requirements
 
@@ -61,13 +66,19 @@ For each requirement in scope:
    - Search for related function/class names
    - Check test files for coverage
 
-2. **Evaluate completeness**:
+2. **Cross-reference AIDLC artifacts** (if available):
+   - Check user stories coverage (are all stories implemented?)
+   - Check component design coverage (are all components built?)
+   - Check execution plan stages (were all planned construction stages completed?)
+   - Verify AIDLC state tracking in `aidlc-docs/aidlc-state.md`
+
+3. **Evaluate completeness**:
    - Core functionality implemented?
    - Edge cases handled?
    - Error scenarios covered?
    - Tests exist and pass?
 
-3. **Check acceptance criteria**:
+4. **Check acceptance criteria**:
    - Each criterion individually verified
    - Evidence documented
 
