@@ -137,7 +137,6 @@ project-root/
 ├── docs/
 │   ├── requirements.md          # Enhanced via interactive refinement
 │   ├── refinement-log.md        # Record of refinement dialogue
-│   ├── development-plan.md
 │   ├── TECH-DEBT.md
 │   └── sessions/
 └── src/                         # Actual code (when implemented)
@@ -262,7 +261,7 @@ After interactive refinement, `docs/requirements.md` is generated with:
 
 | Skill | Purpose |
 |-------|---------|
-| `/dev-{project}` | Main development driver (follows development-plan.md) |
+| `/dev-{project}` | Main development driver (AIDLC Construction executor) |
 | `/code-review` | Automated code quality checks |
 | `/tech-debt` | Technical debt tracking and management |
 | `/cross-check` | Requirements compliance verification |
@@ -372,7 +371,7 @@ The system supports continuous improvement through:
 1. **Session Logs**: Every dev session creates a log for traceability
 2. **TECH-DEBT Tracking**: Issues are captured and prioritized
 3. **Cross-Check Reports**: Phase completion triggers compliance verification
-4. **Plan Evolution**: development-plan.md updates as work progresses
+4. **Plan Evolution**: AIDLC per-stage plan files update as work progresses
 
 This enables:
 - Multiple development iterations

@@ -31,7 +31,7 @@ Systematically verify that implementations align with documented requirements, i
    - `aidlc-docs/inception/plans/execution-plan.md` (verify planned stages were completed)
 
 3. **Search for development plan**:
-   - `docs/development-plan.md`
+   - `aidlc-docs/aidlc-state.md`
 
 4. **If not found**, report error and suggest running `/init-project`
 

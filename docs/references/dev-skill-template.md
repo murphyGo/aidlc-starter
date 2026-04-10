@@ -1,42 +1,53 @@
 # {Project Name} Development Skill
 
-Incrementally develops the {Project Name} service following the development plan.
+AIDLC Construction executor — the daily driver for developing the {Project Name} service.
 
 ## Arguments
 
-- `$ARGUMENTS` - (Optional) Specific Phase or task (e.g., `phase2`, `2.1`)
+- `$ARGUMENTS` - (Optional) Target override:
+  - (empty) - Auto-detect next construction target
+  - `{unit-name}` - Work on specific unit
+  - `{unit-name} {stage}` - Work on specific unit and stage (e.g., `auth-service code-generation`)
 
 ## Objective
 
-Execute one sub-task at a time from the development plan to incrementally build the {Project Name} service. Ensure quality through requirements compliance, best practices, and unit tests.
+Execute AIDLC Construction stages for each unit of work. This skill reads `aidlc-state.md` to determine the current unit and stage, loads the appropriate AIDLC rule, and executes the stage (design → code generation → build & test). One stage step at a time, incrementally.
 
 ---
 
-## AIDLC Construction Integration
+## How This Skill Works
 
-This skill operates within the AIDLC Construction phase. Before executing tasks, it references the project's AI-DLC artifacts to ensure alignment:
-
-- **Execution plan**: `aidlc-docs/inception/plans/execution-plan.md` — defines which construction stages apply
-- **Application design**: `aidlc-docs/inception/application-design/` — component definitions, dependencies, services
-- **Requirements reference**: `aidlc-docs/inception/requirements/requirements.md` → `docs/requirements.md`
-- **Unit definitions**: `aidlc-docs/inception/application-design/unit-of-work.md` (if units were generated)
-
-### AIDLC Construction Stages Awareness
-
-The development plan includes an "AIDLC Construction Stages" table. When the execution plan specifies stages like Functional Design or NFR Requirements, the dev skill should:
-
-1. **Before Code Generation tasks**: Check if the execution plan requires design stages (Functional Design, NFR Requirements, NFR Design, Infrastructure Design) for the current unit
-2. **If design stages apply but haven't been completed**: Guide the user through the relevant AIDLC construction stage rules (from `aidlc-workflows/aidlc-rules/aws-aidlc-rule-details/construction/`) before writing code
-3. **If design stages are marked N/A**: Proceed directly to implementation
-4. **Extension enforcement**: If extensions are enabled in `aidlc-docs/aidlc-state.md`, check applicable rules at each stage
+```
+/dev-{name}
+    │
+    ▼
+Read aidlc-state.md → Find first incomplete unit
+    │
+    ▼
+Determine current stage for that unit
+(Functional Design → NFR Req → NFR Design → Infra Design → Code Gen → Build & Test)
+    │
+    ▼
+Does per-stage plan file exist?
+    │
+    ├── No  → Enter stage: Load AIDLC rule → Part 1 (Planning)
+    │         Create plan file with [ ] checkboxes
+    │
+    └── Yes → Find next [ ] checkbox
+              │
+              ├── Found → Execute that step (Part 2)
+              │           Mark [x], update aidlc-state.md
+              │
+              └── All [x] → Stage complete
+                            Present completion options
+                            Move to next stage
+```
 
 ---
 
 ## Execution Steps
 
 ### Step 0: Health Check (Automatic)
-
-Automatic status check before starting development:
 
 1. **TECH-DEBT Escalation Check**:
    - Read `docs/TECH-DEBT.md`
@@ -55,139 +66,197 @@ Automatic status check before starting development:
      Continue with development? (yes/no/review-debt)
      ```
 
-2. **Phase Completion Check**:
-   - Scan completed Phases in `docs/development-plan.md`
-   - Check existing reviews in `docs/cross-checks/`
-   - If unchecked Phase found:
+2. **Stage Completion Check**:
+   - Read `aidlc-docs/aidlc-state.md`
+   - Check if any unit has all construction stages complete but no cross-check
+   - Check existing reports in `docs/cross-checks/`
+   - If unchecked unit found:
      ```
-     📋 Phase Review Pending
+     📋 Unit Cross-Check Pending
 
-     Phase [N] is complete but has no cross-check document.
+     Unit "{unit-name}" completed all construction stages but has no cross-check.
      Run cross-check now? (yes/no/later)
      ```
-   - **yes**: Execute `/cross-check` for the unchecked phase before proceeding to development
-   - **no**: Skip cross-check and proceed directly to next development target
-   - **later**: Acknowledge and proceed, but remind again at next invocation
+   - **yes**: Execute `/cross-check` for the unit before proceeding
+   - **no**: Skip and proceed
+   - **later**: Acknowledge, remind at next invocation
 
 **Note**: Health check alerts are informational. You can proceed with "yes" or address issues first.
 
 ### Step 1: Environment Validation
 
 1. **Verify Path Existence**:
-   - `docs/development-plan.md`
-   - `docs/TECH-DEBT.md`
-   - `docs/requirements.md`
-   - `CLAUDE.md`
-   - `docs/DESIGN.md`
-   - `aidlc-docs/aidlc-state.md` (AI-DLC state tracking)
-   - `aidlc-docs/inception/plans/execution-plan.md` (construction stage decisions)
+   - `aidlc-docs/aidlc-state.md` (AIDLC state tracker — **primary**)
+   - `aidlc-docs/inception/plans/execution-plan.md` (stage strategy per unit)
+   - `docs/requirements.md` (requirements reference)
+   - `docs/TECH-DEBT.md` (debt registry)
+   - `CLAUDE.md` (project context)
+   - `docs/DESIGN.md` (architecture reference)
 
-### Step 2: Analyze Development Plan
+2. **Load AIDLC Common Rules** (per core-workflow.md, MANDATORY):
+   - `common/process-overview.md`
+   - `common/session-continuity.md`
+   - `common/content-validation.md`
+   - `common/question-format-guide.md`
 
-1. **Read**: `docs/development-plan.md`
+3. **Load Extension Opt-in Files** (if extensions enabled in aidlc-state.md):
+   - Scan `extensions/` for `*.opt-in.md` files
+   - Track which extensions are active for enforcement
 
-2. **Read AIDLC context** (if exists):
-   - `aidlc-docs/inception/plans/execution-plan.md` — check which construction stages apply
-   - `aidlc-docs/aidlc-state.md` — current state, enabled extensions
+### Step 2: Find Next Construction Target
 
-3. **Parse Plan** (supports both Unit-centric and Phase-centric layouts):
+1. **Read**: `aidlc-docs/aidlc-state.md`
 
-   **Unit-centric plan** (has `## Unit:` sections):
-   - Unit Overview table (units, stories, construction stages, design artifacts, status)
-   - Per-unit sub-tasks with checkbox status
-   - Cross-Unit integration tasks
+2. **Read**: `aidlc-docs/inception/plans/execution-plan.md` — check which stages apply per unit
 
-   **Phase-centric plan** (fallback, has `## Phase N:` sections):
-   - Construction Stages table
-   - Current status table (component status)
-   - Per-phase sub-tasks with checkbox status
+3. **Find current unit and stage** (scan in document order):
 
-   For both formats:
-   - Checkbox status: `[x]` = complete, `[ ]` = incomplete
-   - Note **AIDLC Design** path for the current unit/phase (e.g., `aidlc-docs/construction/{unit-name}/`)
-   - Note story mappings (e.g., `→ US-001`, `→ FR-003`)
+   For each unit listed in aidlc-state.md:
+   - Check construction stage completion status
+   - The **construction stage order** is:
+     1. Functional Design (if applicable per execution-plan)
+     2. NFR Requirements (if applicable)
+     3. NFR Design (if applicable)
+     4. Infrastructure Design (if applicable)
+     5. Code Generation (always required)
+     6. Build and Test (runs once after ALL units complete Code Generation)
+   - Find the **first unit** with an **incomplete stage**
+   - Skip stages marked N/A in execution-plan.md
 
-4. **Find Next Development Target** (scan top to bottom):
-   - Skip fully checked `[x]` units/phases/sub-tasks
-   - Skip items marked "deferred" or "— *deferred*"
-   - Select **first sub-task** with at least one unchecked `[ ]` item
-   - For mixed-status sub-tasks, target only unchecked items
-   - **AIDLC check**: If the target unit has construction design stages listed (e.g., Functional Design, NFR) and corresponding artifacts don't exist in `aidlc-docs/construction/{unit-name}/`, prompt the user:
-     ```
-     ⚠️ AIDLC Design Stage Pending
+4. **Check for per-stage plan file**:
+   - Look in `aidlc-docs/construction/plans/` for:
+     - `{unit-name}-functional-design-plan.md`
+     - `{unit-name}-nfr-requirements-plan.md`
+     - `{unit-name}-nfr-design-plan.md`
+     - `{unit-name}-infrastructure-design-plan.md`
+     - `{unit-name}-code-generation-plan.md`
+   - If plan file **exists**: Find next `[ ]` checkbox (incomplete step)
+   - If plan file **does not exist**: This is a fresh stage entry — will create plan in Step 4
+   - If **all checkboxes are `[x]`**: Stage is complete — update aidlc-state.md and find next stage
 
-     Unit "{unit-name}" requires Functional Design before code generation
-     (per execution-plan.md), but no design artifacts found.
+5. **Handle $ARGUMENTS override**:
+   - If unit name provided, jump to that unit
+   - If unit + stage provided, jump to that specific stage
+   - Validate the override is valid (unit exists, stage applies)
 
-     Options:
-     - **design**: Run AIDLC design stages for this unit first
-     - **skip**: Proceed without formal design (acknowledge in audit.md)
-     ```
+### Step 3: Present Construction Target
 
-### Step 3: Present Development Target
-
-Present identified sub-task in this format:
+Present identified target:
 
 ```
-## Next Development Target
+## Next Construction Target
 
-**Unit**: [unit-name] (or "single-unit" if phase-centric plan)
-**Sub-task**: [Sub-task number and title]
-**Story**: [US-XXX or FR-XXX mapping, if any]
-**AIDLC Design**: [path to design artifacts, if applicable]
+**Unit**: {unit-name}
+**Stage**: {stage-name} (e.g., Functional Design, Code Generation)
+**Status**: {New stage / Step N of M}
 
-### Items to Develop:
-- [ ] Item 1 description
-- [ ] Item 2 description
-...
+### AIDLC Rule: `construction/{stage-file}.md`
 
-### Related Requirements:
-- FR-XXX: [Requirement description]
-- NFR-XXX: [Requirement description]
+### Context:
+- Stories: {US-XXX mappings from unit-of-work}
+- Design artifacts: `aidlc-docs/construction/{unit-name}/` {existing artifacts listed}
+- Dependencies: {unit dependencies from unit-of-work.md}
 
-### Estimated Files:
-- New: [List of files to create]
-- Modified: [List of files to modify]
+### What happens next:
+{For new stage}: Load AIDLC rule → Generate plan with questions/steps
+{For in-progress}: Execute step {N}: "{step description}"
 
-Proceed with this development? (yes/no)
+Proceed? (yes/no/skip-to:{stage})
 ```
 
 **Wait for user approval before proceeding.**
 
-### Step 4: Development (Plan Mode)
+### Step 4: Execute Construction Stage
 
-After user approval:
+After user approval, behavior depends on the **stage type**:
 
-1. **Enter Plan Mode**: Use `EnterPlanMode` tool
+#### 4A: Design Stages (Functional Design, NFR Requirements, NFR Design, Infrastructure Design)
 
-2. **Research Phase**:
-   - Read related requirements from `docs/requirements.md`
-   - Check design patterns in `docs/DESIGN.md`
-   - Read AIDLC design artifacts (if they exist for this unit):
-     - `aidlc-docs/construction/{unit-name}/functional-design/` — business logic, domain entities
-     - `aidlc-docs/construction/{unit-name}/nfr-design/` — NFR patterns, logical components
-     - `aidlc-docs/inception/application-design/` — component definitions, services, dependencies
-   - Explore existing codebase for patterns and dependencies
+1. **Load the AIDLC rule file**:
+   - Read `aidlc-workflows/aidlc-rules/aws-aidlc-rule-details/construction/{stage}.md`
+   - Follow the rule's instructions exactly
 
-3. **Write Implementation Plan**:
-   - Files to create/modify
-   - Implementation approach aligned with requirements
-   - Test strategy (unit tests for all new features)
-   - Integration points with existing code
+2. **If entering stage fresh** (no plan file):
+   - Follow the rule's Part 1 / Planning section
+   - Create plan file: `aidlc-docs/construction/plans/{unit-name}-{stage}-plan.md`
+   - Include questions with `[Answer]:` tags for user responses
+   - Present questions to user, wait for answers
 
-4. **Exit Plan Mode** and implement:
-   - Strictly follow language best practices
-   - Write clean, idiomatic code
-   - Include comprehensive unit tests
-   - Run tests to verify
+3. **If resuming stage** (plan file exists with unanswered questions or incomplete steps):
+   - Load existing plan, find where we left off
+   - Continue from that point
+
+4. **Generate design artifacts** (per the AIDLC rule):
+   - Write to `aidlc-docs/construction/{unit-name}/{stage}/`
+   - Validate content per `common/content-validation.md`
+
+5. **On stage completion**:
+   - Mark all plan checkboxes `[x]`
+   - Present 2-option AIDLC completion message:
+     ```
+     Stage "{stage-name}" complete for unit "{unit-name}".
+
+     1. Request Changes — modify artifacts before proceeding
+     2. Continue to Next Stage — proceed to {next-stage}
+     ```
+   - Wait for explicit user approval
+   - Update `aidlc-state.md` with stage completion
+
+#### 4B: Code Generation
+
+1. **Load rule**: `construction/code-generation.md`
+
+2. **Part 1: Planning** (if no plan file):
+   - Read all design artifacts for this unit
+   - Create `aidlc-docs/construction/plans/{unit-name}-code-generation-plan.md`
+   - Document explicit numbered steps with `[ ]` checkboxes
+   - Include file paths, implementation approach, test strategy
+   - Get explicit user approval of plan
+
+3. **Part 2: Execution** (plan exists):
+   - Find next `[ ]` step
+   - **Enter Plan Mode** (EnterPlanMode tool) for research
+   - Read related requirements, design artifacts, existing code
+   - Write implementation plan
+   - **Exit Plan Mode** and implement:
+     - Write clean, idiomatic code
+     - Application code → workspace root (NEVER in aidlc-docs/)
+     - Documentation summaries → `aidlc-docs/construction/{unit-name}/code/`
+     - Include comprehensive unit tests
+     - Run tests to verify
+   - Mark step `[x]` in plan file immediately
+
+4. **On all steps complete**:
+   - Present 2-option completion:
+     ```
+     Code Generation complete for unit "{unit-name}".
+
+     1. Request Changes
+     2. Continue to Next Stage / Build and Test
+     ```
+   - Update `aidlc-state.md`
+
+#### 4C: Build and Test
+
+Runs **once** after ALL units complete Code Generation.
+
+1. **Load rule**: `construction/build-and-test.md`
+2. Follow the rule's steps to generate:
+   - `aidlc-docs/construction/build-and-test/build-instructions.md`
+   - `aidlc-docs/construction/build-and-test/unit-test-instructions.md`
+   - `aidlc-docs/construction/build-and-test/integration-test-instructions.md`
+   - Additional test instruction files as applicable
+   - `aidlc-docs/construction/build-and-test/build-and-test-summary.md`
+3. Execute build and tests
+4. Update `aidlc-state.md`
 
 ### Step 5: Self-Review & Documentation
 
-After successful implementation:
+After successful implementation (Code Generation steps only):
 
 **5.1 Code Review** (delegated to separate agent for fresh-eyes analysis):
 
-Delegate code review to a **separate agent** using the Agent tool. This avoids confirmation bias — the reviewer reads the code without knowing the author's intent.
+Delegate code review to a **separate agent** using the Agent tool.
 
 ```
 Agent(subagent_type="general-purpose", prompt="""
@@ -225,31 +294,31 @@ After receiving the agent's report:
   ### Code Review Improvement Suggestions
 
   The following issues were found during code review.
-  Would you like to address them now or add to the development plan?
+  Would you like to address them now or add to the stage plan?
 
   | # | Severity | Issue | Suggested Action |
   |---|----------|-------|------------------|
   | 1 | ⚠️ Medium | [issue description] | [concrete fix suggestion] |
-  | 2 | ⚠️ Medium | [issue description] | [concrete fix suggestion] |
 
   Options:
   - fix: Address now before proceeding
-  - plan: Add as sub-task to development plan
+  - plan: Add as step to current stage plan file
   - skip: Acknowledge and continue
   ```
-  - **fix**: Implement the fix immediately, re-run tests, update the code review results
-  - **plan**: Add a new sub-task to `development-plan.md` under the current phase with the improvement description
+  - **fix**: Implement the fix, re-run tests, update code review results
+  - **plan**: Add a new `[ ]` step to the current `{unit-name}-code-generation-plan.md`
   - **skip**: Document in session log as "Acknowledged, not addressed" with rationale
 
-**5.2 Create Session Log** (`docs/sessions/YYYY-MM-DD-<phase>-<task>.md`):
+**5.2 Create Session Log** (`docs/sessions/YYYY-MM-DD-{unit}-{stage}-{step}.md`):
 
 ```markdown
-# Session Log: YYYY-MM-DD - Phase N.M - [Task Title]
+# Session Log: YYYY-MM-DD - {Unit} - {Stage} Step {N}
 
 ## Overview
 - **Date**: YYYY-MM-DD
-- **Phase**: N - [Phase Name]
-- **Sub-task**: N.M - [Sub-task Name]
+- **Unit**: {unit-name}
+- **Stage**: {stage-name}
+- **Step**: {step number and description}
 
 ## Work Summary
 [Brief description of completed work]
@@ -266,11 +335,11 @@ After receiving the agent's report:
 ## Code Review Results
 | Category | Status |
 |----------|--------|
-| Error Handling | ✅/⚠️/🔴 |
-| Resource Management | ✅/⚠️/🔴 |
-| Security | ✅/⚠️/🔴 |
-| Type Safety | ✅/⚠️/🔴 |
-| Tests | ✅/⚠️/🔴 |
+| Correctness | ✅/⚠️/🔴 |
+| Safety | ✅/⚠️/🔴 |
+| Reliability | ✅/⚠️/🔴 |
+| Maintainability | ✅/⚠️/🔴 |
+| Test Coverage | ✅/⚠️/🔴 |
 
 ## Potential Risks
 - [Identified risks]
@@ -296,64 +365,60 @@ If ADR needed:
 2. Create `docs/adr/NNNN-<short-title>.md` using ADR template
 3. Reference ADR in session log
 
-
-### Step 6: Update Development Plan
+### Step 6: Update Construction State
 
 After documentation:
 
-1. **Update Checkboxes**:
-   - Mark completed items with `[x]`
-   - When all items in a sub-task are complete, consider sub-task header complete
+1. **Update per-stage plan file**:
+   - Mark completed step with `[x]`
+   - If all steps in plan are `[x]`, stage is complete
 
-2. **Update Status** (Unit Overview table or Current Status table):
-   - `✅ Complete` - All related sub-tasks complete
-   - `🔄 In Progress` - Some sub-tasks complete
-   - `❌ Not Started` - No sub-tasks started
+2. **Update aidlc-state.md**:
+   - Mark stage completion for the unit
+   - Follow AIDLC's native state tracking format
 
-3. **Suggest Additions** (if applicable):
-   - If additional needs discovered during implementation, suggest new sub-task
-   - Format: "Suggested addition to Unit {name} / Phase X: [description]"
+3. **Log to audit.md**:
+   - Append stage/step completion entry per AIDLC audit format
 
-4. **Unit/Phase Completion Auto-Actions** (if all sub-tasks in a Unit or Phase just completed):
-   - Detect: All sub-tasks in current Unit/Phase are now `[x]`
-   - Prompt user for cross-check:
+4. **Unit Completion Auto-Actions** (if all stages for a unit just completed):
+   - Detect: All construction stages for current unit are now complete
+   - Prompt user:
      ```
-     🎉 Unit "{unit-name}" / Phase [N] Complete!
+     🎉 Unit "{unit-name}" Construction Complete!
 
-     All sub-tasks are now complete.
+     All construction stages are done.
      Run cross-check against specs now? (yes/no/later)
      ```
-   - **yes**: Execute `/cross-check` for the completed unit/phase:
-     - Verify implementation vs specs and AIDLC design artifacts
-     - Generate compliance matrix
-     - Create `docs/cross-checks/{unit-name or phase-N}-[name].md`
-     - Report any gaps found:
-       ```
-       Cross-Check Results:
-       - ✅ Complete: X requirements
-       - ⚠️ Partial: Y requirements
-       - ❌ Gap: Z requirements
+   - **yes**: Execute `/cross-check` for the completed unit
+   - **no**: Proceed to next unit or Build & Test
+   - **later**: Skip for now, flag in Step 0 health check next time
 
-       [If gaps] Add gap items to next phase? (yes/no)
-       ```
-   - **no**: Skip cross-check, proceed to summary
-   - **later**: Skip for now, but flag in Step 0 health check on next invocation
+5. **All Units Complete → Build & Test**:
+   - When all units have completed Code Generation
+   - Automatically transition to Build and Test stage
+   - Notify user:
+     ```
+     All units have completed Code Generation.
+     Proceeding to Build and Test stage.
+     ```
 
 ### Step 7: Summary Report
 
 Provide completion summary:
 
 ```
-## Development Complete
+## Construction Step Complete
 
-**Sub-task**: [Sub-task number and title]
+**Unit**: {unit-name}
+**Stage**: {stage-name}
+**Step**: {step number} of {total} {or "Stage entry — plan created"}
 **Status**: Complete
 
 ### Changes Made:
 - Created: [List of new files]
 - Modified: [List of modified files]
 
-### Tests:
+### Tests: (Code Generation only)
 - Added: [count] new tests
 - All tests passing: Yes/No
 
@@ -361,22 +426,13 @@ Provide completion summary:
 - Session Log: [filename]
 - TECH-DEBT: [Added/resolved items, if any]
 
-### Feedback Loop Actions:
-- TECH-DEBT: [Added/resolved items]
-- Cross-Check: [Generated on Phase completion / Not needed]
+### Construction Progress:
+- Unit "{unit-name}": Stage {N} of {total stages} — {stage-name}
+- Plan progress: {completed}/{total} steps [x]
+- Overall: {units complete}/{total units} units done
 
-### Phase Completion: (if applicable)
-- Phase [N] complete: Yes/No
-- Cross-check generated: [filename]
-- Compliance rate: [X]% complete
-- Gaps added to next Phase: [count]
-
-### Development Plan Updated:
-- [List of checkbox changes]
-- Current status: [Component] → [New status]
-
-### Next Sub-task Preview:
-[Brief description of next incomplete sub-task, if any]
+### Next Target:
+{Brief description of next step/stage/unit}
 ```
 
 ---
@@ -387,12 +443,14 @@ Provide completion summary:
 
 **No Auto-Commit**: Do not automatically commit changes. Always show changes to the user and get explicit approval before committing.
 
-### Sub-task Selection Rules
+### Execution Rules
 
-1. **One sub-task per execution** - Don't develop multiple sub-tasks in a single run
-2. **Skip deferred items** - Items marked "deferred" or "— *deferred to Phase X*" are not development targets
-3. **Partial completion** - For sub-tasks with some completed items, only develop remaining incomplete items
-4. **Sequential order** - Always process Phases and sub-tasks in document order (top to bottom)
+1. **One step per execution** — Execute one plan step (or enter one new stage) per `/dev-{name}` invocation
+2. **Skip N/A stages** — Stages marked N/A in execution-plan.md are skipped automatically
+3. **Follow AIDLC rules exactly** — Each stage has a rule file in `construction/`. Load and follow it
+4. **Sequential stage order** — Stages must be completed in order within each unit
+5. **Unit order** — Process units in the order defined in `aidlc-state.md`
+6. **Build & Test is global** — Runs once after ALL units complete Code Generation
 
 ### Development Standards
 
@@ -406,58 +464,50 @@ Provide completion summary:
    - Error handling with context
    - Comprehensive testing
 
-3. **Test Requirements**:
+3. **Test Requirements** (Code Generation stage):
    - Unit tests required for all new functions/methods
    - Test both success and error paths
    - Use appropriate test fixtures
    - Mock external dependencies
 
 4. **Code Structure**:
-   - New code goes in appropriate source directory
+   - Application code goes in workspace root (NEVER in aidlc-docs/)
    - Follow existing project structure patterns
+   - Documentation summaries go in `aidlc-docs/construction/{unit-name}/code/`
 
-### Development Plan Update Rules
+### AIDLC Compliance
 
-1. **Checkbox Updates**:
-   ```markdown
-   - [x] Completed item    # Check when complete
-   - [ ] Pending item      # Unchecked when incomplete
-   ```
-
-2. **Status Mapping**:
-   | Condition | Status |
-   |-----------|--------|
-   | All sub-tasks complete | `✅ Complete` |
-   | At least one sub-task complete | `🔄 In Progress` |
-   | No sub-tasks started | `❌ Missing` |
-
-3. **Adding New Sub-tasks**:
-   - Suggest only, don't add without user approval
-   - Format suggestions clearly with rationale
+1. **Audit logging** — Append to `aidlc-docs/audit.md` for every stage entry, completion, and user decision
+2. **Content validation** — Validate Mermaid/ASCII diagrams per `common/content-validation.md`
+3. **Extension enforcement** — Check enabled extensions before stage completion; non-compliance = blocking
+4. **2-option completion** — Always present "Request Changes" / "Continue" at stage end
+5. **Session continuity** — On resume, auto-load all previous stage artifacts before continuing
 
 ---
 
 ## Error Handling
 
-- **No incomplete sub-tasks**: Report "All sub-tasks in development plan are complete!"
-- **Test failures**: Don't mark sub-task as complete; report failures and suggest fixes
-- **Build errors**: Fix before proceeding; don't update development plan until resolved
+- **All stages complete**: Report "All construction stages are complete! Project is ready."
+- **Test failures**: Don't mark step as complete; report failures and suggest fixes
+- **Build errors**: Fix before proceeding; don't update plan until resolved
+- **Missing AIDLC rule file**: Report error with expected path
+- **Missing aidlc-state.md**: Report error, suggest running `/init-project` first
 
 ---
 
 ## Example Invocations
 
-Develop next pending task:
+Continue from where you left off:
 ```
 /dev-{project}
 ```
 
-Work on specific Phase:
+Work on specific unit:
 ```
-/dev-{project} phase2
+/dev-{project} auth-service
 ```
 
-Work on specific sub-task:
+Work on specific stage:
 ```
-/dev-{project} 2.1
+/dev-{project} auth-service code-generation
 ```

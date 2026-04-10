@@ -160,7 +160,6 @@ docs/
 ├── refinement-log.md    ← Stage 0 output (dialogue record)
 ├── vision.md            ← Stage 1 input (AI-DLC format)
 ├── tech-env.md          ← Stage 1 input (AI-DLC format)
-├── development-plan.md  ← Stage 1 output (from AI-DLC)
 └── TECH-DEBT.md         ← Initialized template
 
 aidlc-docs/              ← Stage 1 output (AI-DLC generates)

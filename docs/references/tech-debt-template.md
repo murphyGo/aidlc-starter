@@ -257,7 +257,7 @@ Transform debt into development plan format:
 
 ### Proposed Development Task
 
-**Target**: Add to development-plan.md
+**Target**: Add to current unit's stage plan
 
 {generated task markdown}
 
@@ -266,9 +266,10 @@ Add to development plan? (yes/no)
 
 ### Step 6P: Update Documents (on approval)
 
-1. **Update development-plan.md**:
-   - Add new task to appropriate section
+1. **Update current stage plan**:
+   - Add new step to the active per-stage plan file in `aidlc-docs/construction/plans/`
    - Include `[DEBT-NNN]` reference
+   - Log in `aidlc-docs/audit.md`
 
 2. **Update TECH-DEBT.md**:
    - Add note: "Promoted to development plan on YYYY-MM-DD"

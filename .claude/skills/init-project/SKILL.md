@@ -761,15 +761,10 @@ Generate project root `CLAUDE.md`:
 
 ## Important: Before Development
 
-**Always check `docs/development-plan.md` before starting any work.**
-
-- If your task exists in the plan → Follow the established workflow
-- If your task does NOT exist → Update `docs/development-plan.md` first to add your task
-
 Run `/dev-{name}` to:
-1. See current development status
-2. Get the next task to work on
-3. Follow the established development workflow
+1. See current construction stage and unit progress
+2. Get the next task to work on (from AIDLC per-stage plan files)
+3. Follow the AIDLC Construction workflow
 
 ---
 
@@ -788,7 +783,7 @@ Run `/dev-{name}` to:
 
 | Document | Purpose |
 |----------|---------|
-| `docs/development-plan.md` | **Start here** - Development roadmap and task tracking |
+| `aidlc-docs/aidlc-state.md` | **Start here** - AIDLC state and construction progress |
 | `docs/requirements.md` | Project requirements and acceptance criteria |
 | `docs/DESIGN.md` | Architecture decisions and rationale |
 | `docs/TECH-DEBT.md` | Technical debt registry |
@@ -799,7 +794,7 @@ Run `/dev-{name}` to:
 ## Development Workflow
 
 ```
-1. /dev-{name}          → Get next task from development-plan.md
+1. /dev-{name}          → Get next task from AIDLC construction stage
 2. Implement            → Write code following requirements
 3. /code-review git     → Review before committing
 4. Commit               → Save your work
@@ -888,181 +883,7 @@ Generate `docs/DESIGN.md`:
 *Update this document as architectural decisions evolve during development.*
 ```
 
-### Step 16.2: Create development-plan.md
-
-**Document Relationship**: `docs/development-plan.md` is the tactical task tracker derived from `aidlc-docs/inception/plans/execution-plan.md`. The execution plan defines *which AIDLC stages to run and why* (strategy); the development plan defines *what to implement and when* (tactics). They are NOT duplicates — execution-plan stays read-only after inception, development-plan is the living document updated during construction.
-
-**Unit-centric organization**:
-- If `unit-of-work.md` exists → organize by **Unit** (primary axis), with phases inside each unit
-- If no units → organize by **Phase** (Foundation → Core → Polish) as fallback
-- Each sub-task includes its **AIDLC Unit** and **design artifacts path** for traceability
-
-**Enhanced with AI-DLC outputs**:
-- `execution-plan.md` → construction stage decisions (which stages apply per unit)
-- `unit-of-work.md` → unit definitions and dependencies
-- `components.md` → component status table
-- `stories.md` → task-to-story mapping
-- `unit-of-work-story-map.md` → which stories belong to which unit
-
-Generate `docs/development-plan.md`:
-
-**When Units exist** (multi-unit project):
-
-```markdown
-# Development Plan: {Project Name}
-
-*Generated on {date}*
-*Strategy: aidlc-docs/inception/plans/execution-plan.md*
-
-## Unit Overview
-
-| Unit | Stories | Construction Stages | Design Artifacts | Status |
-|------|---------|-------------------|------------------|--------|
-| {unit-name} | US-001, US-002 | FD, NFR-R, NFR-D, CG, BT | `aidlc-docs/construction/{unit-name}/` | ❌ Not Started |
-| {unit-name-2} | US-003 | CG, BT | `aidlc-docs/construction/{unit-name-2}/` | ❌ Not Started |
-
-*FD=Functional Design, NFR-R=NFR Requirements, NFR-D=NFR Design, ID=Infrastructure Design, CG=Code Generation, BT=Build and Test*
-
----
-
-## Unit: {unit-name}
-
-**AIDLC Design**: `aidlc-docs/construction/{unit-name}/`
-**Stories**: US-001, US-002
-**Construction Stages**: Functional Design → NFR Requirements → NFR Design → Code Generation → Build and Test
-
-### {unit-name}.1 - {Task title} (→ US-001)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add unit tests
-
-### {unit-name}.2 - {Task title} (→ US-002)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add unit tests
-
----
-
-## Unit: {unit-name-2}
-
-**AIDLC Design**: `aidlc-docs/construction/{unit-name-2}/`
-**Stories**: US-003
-**Construction Stages**: Code Generation → Build and Test
-
-### {unit-name-2}.1 - {Task title} (→ US-003)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add unit tests
-
----
-
-## Cross-Unit: Integration & Polish
-
-### integration.1 - Cross-unit integration
-- [ ] Integration between {unit-name} and {unit-name-2}
-- [ ] Integration tests
-
-### polish.1 - Error Handling & Edge Cases
-- [ ] Implement error handling patterns
-- [ ] Handle edge cases
-
-### polish.2 - Documentation & Cleanup
-- [ ] Update API documentation
-- [ ] Final testing
-
----
-
-## Progress Tracking
-
-| Unit | Tasks | Complete | Progress |
-|------|-------|----------|----------|
-| {unit-name} | X | 0 | 0% |
-| {unit-name-2} | Y | 0 | 0% |
-| Cross-Unit | Z | 0 | 0% |
-
----
-
-*This plan is updated automatically by `/dev-{name}` as tasks are completed.*
-```
-
-**When no Units exist** (single-unit / simple project, fallback):
-
-```markdown
-# Development Plan: {Project Name}
-
-*Generated on {date}*
-*Strategy: aidlc-docs/inception/plans/execution-plan.md*
-
-## Construction Stages (from execution plan)
-
-| Stage | Applies | Notes |
-|-------|---------|-------|
-| Functional Design | [Yes/No] | [reasoning] |
-| NFR Requirements | [Yes/No] | [reasoning] |
-| NFR Design | [Yes/No] | [reasoning] |
-| Infrastructure Design | [Yes/No] | [reasoning] |
-| Code Generation | Yes | Always required |
-| Build and Test | Yes | Always required |
-
-**AIDLC Design**: `aidlc-docs/construction/` (if design stages apply)
-
-## Current Status
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| {component from DESIGN} | ❌ Not Started | |
-
----
-
-## Phase 1: Foundation
-
-### 1.1 - {First task} (→ FR-001)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add unit tests
-
-### 1.2 - {Second task} (→ FR-002)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add unit tests
-
----
-
-## Phase 2: Core Features
-
-### 2.1 - {Feature} (→ FR-003)
-- [ ] {Implementation item}
-- [ ] {Implementation item}
-- [ ] Add integration tests
-
----
-
-## Phase 3: Polish & Integration
-
-### 3.1 - Error Handling & Edge Cases
-- [ ] Implement error handling patterns
-- [ ] Handle edge cases
-
-### 3.2 - Documentation & Cleanup
-- [ ] Update API documentation
-- [ ] Final testing
-
----
-
-## Progress Tracking
-
-| Phase | Tasks | Complete | Progress |
-|-------|-------|----------|----------|
-| Phase 1 | X | 0 | 0% |
-| Phase 2 | Y | 0 | 0% |
-| Phase 3 | Z | 0 | 0% |
-
----
-
-*This plan is updated automatically by `/dev-{name}` as tasks are completed.*
-```
-
-### Step 16.3: Create TECH-DEBT.md
+### Step 16.2: Create TECH-DEBT.md
 
 Generate `docs/TECH-DEBT.md`:
 
@@ -1109,7 +930,7 @@ _No resolved items yet._
 *Managed by `/tech-debt` skill. Run `/tech-debt add` to add new items.*
 ```
 
-### Step 16.4: Create README.md
+### Step 16.3: Create README.md
 
 Generate project `README.md` (replace aidlc-starter README):
 
@@ -1178,7 +999,7 @@ claude
 
 | Document | Description |
 |----------|-------------|
-| `docs/development-plan.md` | Development roadmap |
+| `aidlc-docs/aidlc-state.md` | AIDLC state and progress |
 | `docs/requirements.md` | Detailed requirements |
 | `docs/DESIGN.md` | Architecture decisions |
 
@@ -1215,7 +1036,7 @@ claude
 ### Stage 2: Project Setup ✅
 - Skills generated: /dev-{name}, /code-review, /tech-debt, /cross-check
 - Documentation: CLAUDE.md, README.md, DESIGN.md
-- Development tracking: development-plan.md, TECH-DEBT.md
+- Development tracking: TECH-DEBT.md
 
 ### Files Created
 - README.md (project readme)
@@ -1225,7 +1046,6 @@ claude
 - docs/vision.md
 - docs/tech-env.md
 - docs/DESIGN.md
-- docs/development-plan.md
 - docs/TECH-DEBT.md
 - .claude/skills/dev-{name}/SKILL.md
 - .claude/skills/code-review/SKILL.md
@@ -1240,7 +1060,7 @@ claude
 
 ### Next Steps
 
-1. Review `docs/development-plan.md` for task overview
+1. Review `aidlc-docs/aidlc-state.md` for construction stage overview
 2. Run `/dev-{name}` to start development
 3. Use `/code-review git` before committing
 
@@ -1360,7 +1180,8 @@ Run `/dev-{name}` to begin.
 - `docs/requirements.md` = **single source of truth** for requirements
 - `aidlc-docs/inception/requirements/requirements.md` = reference/pointer + intent analysis only
 - `docs/DESIGN.md` = developer summary derived from `aidlc-docs/inception/application-design/`
-- `docs/development-plan.md` = tactical tasks derived from `aidlc-docs/inception/plans/execution-plan.md`
+- `aidlc-docs/inception/plans/execution-plan.md` = construction stage strategy (which stages apply per unit)
+- `aidlc-docs/construction/plans/` = per-stage plan files with task checkboxes (created just-in-time during construction)
 
 ---
 

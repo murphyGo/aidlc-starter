@@ -90,7 +90,7 @@ Handle responses:
 |----------|--------|
 | "continue" / "dev" | Find and invoke `/dev-*` skill |
 | "review" | Invoke `/code-review git` |
-| "status" | Show development plan status |
+| "status" | Show construction progress from aidlc-state.md |
 
 #### State: `initialized`
 
