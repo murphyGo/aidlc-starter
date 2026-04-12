@@ -15,6 +15,7 @@ This project provides:
 |-------|---------|---------|
 | `/start` | Unified entry point - auto-detects and routes | `/start` |
 | `/ideate` | Capture lightning idea through dialogue | `/ideate` |
+| `/adopt` | Onboard existing codebase into AI-DLC | `/adopt` |
 | `/init-project` | Bootstrap new project from IDEA.md | `/init-project` |
 | `/code-review` | Analyze code for issues | `/code-review git` |
 | `/tech-debt` | View/manage technical debt | `/tech-debt` |

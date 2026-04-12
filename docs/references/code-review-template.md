@@ -80,6 +80,17 @@ Read each file fully. Understand:
 - What invariants it maintains
 - What happens when things go wrong
 
+### Step 2a: Protocol Selection (Triage)
+
+After reading the code, check for deep-analysis triggers:
+
+1. **Read** `protocols/INDEX.md` for signal-to-protocol mapping
+2. **Scan** the code under review for each signal category in the index
+3. **Load** the corresponding protocol file for each match (e.g., `protocols/concurrency.md`)
+4. **Apply** each loaded protocol's analysis steps during Step 3
+
+Only load protocols whose signals are present in the code. When in doubt, include the protocol.
+
 ### Step 3: Review with Focus Areas
 
 Analyze the code from these perspectives, in priority order:
@@ -88,6 +99,10 @@ Analyze the code from these perspectives, in priority order:
 2. **Safety** — Resource leaks, concurrency bugs, security vulnerabilities, data loss risks
 3. **Reliability** — Error handling quality, failure scenarios, graceful degradation
 4. **Maintainability** — Unnecessary complexity, unclear naming, missing abstractions (or over-abstraction)
+
+#### 3a: Apply Matched Protocols
+
+For each protocol loaded in Step 2a, execute its full analysis steps against the code. Do NOT skip steps — each step builds on the previous one. Include protocol findings in the report (Step 6).
 
 #### Project-Specific Rules
 {PROJECT_SPECIFIC_RULES}
@@ -293,6 +308,16 @@ For each new/modified function:
 | **Total** | **X** | **Y** | **Z** |
 
 **Status**: ✅ All Clear / ⚠️ Warnings Found / 🔴 Issues Found
+
+---
+
+### Protocols Applied
+
+| Protocol | Triggered By | Key Findings |
+|----------|-------------|--------------|
+| {protocol name} | {signal that triggered it} | {summary of findings or "No issues"} |
+
+_If no protocols were triggered, write: "No deep-analysis protocols triggered."_
 
 ---
 

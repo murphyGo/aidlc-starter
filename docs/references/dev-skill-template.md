@@ -271,16 +271,30 @@ You are reviewing {PRIMARY_LANGUAGE} code for the {Project Name} project.
 3. Reliability — error handling quality, failure scenarios
 4. Maintainability — unnecessary complexity, unclear naming
 
+## Deep Analysis Protocols
+After reading the code, check for these signals and apply the corresponding
+protocol from `.claude/skills/code-review/protocols/`:
+- Concurrent access (locks, channels, threads, async) → Read and follow concurrency.md
+- Database/file writes, transactions, WAL → Read and follow data-integrity.md
+- Custom error types, error wrapping, ignored errors → Read and follow error-contract.md
+- Caches, buffers, unbounded collections → Read and follow memory.md
+- Nested loops, hot-path handlers, repeated expensive calls → Read and follow performance.md
+- Open/Close, acquire/release, connection pools → Read and follow resource-lifecycle.md
+- User input, auth checks, secrets, query construction → Read and follow security-boundary.md
+
+Only load protocols whose signals are present in the code.
+
 ## Project-Specific Rules
 {PROJECT_SPECIFIC_RULES}
 
 ## Output Format
 Generate a code review report with:
 1. Summary table (Correctness/Safety/Reliability/Maintainability/Test Coverage × Pass/Warn/Fail)
-2. Issues detail grouped by severity (Critical/High → Medium → Low)
+2. Protocols Applied table (which protocols triggered, key findings)
+3. Issues detail grouped by severity (Critical/High → Medium → Low)
    - Each issue: File:Line, Category, Issue description, Concrete fix suggestion
-3. Self-review checklist with evidence
-4. TECH-DEBT candidates if any
+4. Self-review checklist with evidence
+5. TECH-DEBT candidates if any
 
 Read each file fully. Understand what the code does, then analyze.
 Do NOT just pattern-match — reason about the code's behavior.

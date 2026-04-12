@@ -59,6 +59,26 @@ Book lovers struggle to track their reading lists across devices
 - Database: PostgreSQL
 ```
 
+### Applying to an Existing Project
+
+Already have a codebase? Use `/adopt` instead of `/ideate`:
+
+```
+/adopt
+```
+
+Claude will:
+1. **Scan** your existing codebase (languages, frameworks, structure)
+2. **Guide** you through describing what to add and what to preserve
+3. **Generate** a brownfield-formatted `IDEA.md` with Current State / What We Are Adding / What Must Not Change
+
+Then run `/init-project` as usual — AI-DLC will auto-detect the existing code and run a reverse engineering stage before generating specs.
+
+**Quick setup**: Copy these into your existing project, then run `/start`:
+- `.claude/skills/` directory
+- `aidlc-workflows/` directory
+- `docs/references/` directory
+
 ### 3. Initialize Project
 
 ```
@@ -105,6 +125,7 @@ Creates project-specific automation:
 |-------|---------|
 | `/start` | Unified entry point - auto-detects state and routes |
 | `/ideate` | Capture lightning idea through guided dialogue |
+| `/adopt` | Onboard existing codebase into AI-DLC workflow |
 | `/init-project` | Bootstrap new project from idea |
 | `/code-review git` | Review changed files for issues |
 | `/tech-debt` | View/manage technical debt |
@@ -129,6 +150,7 @@ aidlc-starter/
 │   └── skills/
 │       ├── start/               # Unified entry point
 │       ├── ideate/              # Idea capture skill
+│       ├── adopt/               # Brownfield adoption skill
 │       └── init-project/        # Bootstrap skill
 └── aidlc-workflows/             # AWS AI-DLC rules
     └── aidlc-rules/
@@ -163,11 +185,13 @@ The system supports continuous improvement:
 │     /start      │  Unified entry point
 └────────┬────────┘
          │
-         ▼
-┌─────────────────┐
-│    /ideate      │  Guided idea capture (optional)
-└────────┬────────┘
-         │
+    ┌────┴────┐
+    ▼         ▼
+┌────────┐ ┌────────┐
+│/ideate │ │/adopt  │  New idea vs. existing codebase
+└───┬────┘ └───┬────┘
+    │          │
+    └────┬─────┘
          ▼
 ┌─────────────────┐
 │    IDEA.md      │  Your structured idea

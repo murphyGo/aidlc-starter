@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:aws.amazon.com)",
+      "WebFetch(domain:prod.d13rzhkk8cj2z0.amplifyapp.com)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "chrome-devtools"
+  ]
+}

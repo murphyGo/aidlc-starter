@@ -7,6 +7,7 @@ Single entry point that detects project state and routes to the appropriate skil
 - `$ARGUMENTS` - (optional) Force specific mode:
   - (empty) - Auto-detect state and route
   - `ideate` - Force ideation mode
+  - `adopt` - Force brownfield adoption mode
   - `init` - Force initialization mode
   - `dev` - Force development mode
   - `status` - Show current state without routing
@@ -26,6 +27,7 @@ If `$ARGUMENTS` is provided:
 | Argument | Action |
 |----------|--------|
 | `ideate` | Go to `/ideate` |
+| `adopt` | Go to `/adopt` |
 | `init` | Go to `/init-project` |
 | `dev` | Go to Development Options |
 | `status` | Go to Step 3 (show status only) |
@@ -52,7 +54,13 @@ Check 3: Has Idea?
 ├── If found: State = "has-idea"
 └── If not: Continue
 
-Check 4: Has AI-DLC Rules?
+Check 4: Existing Codebase (Brownfield)?
+├── Scan for: source files (.js, .ts, .py, .go, .rs, .java, etc.)
+│   AND build files (package.json, pom.xml, go.mod, Cargo.toml, etc.)
+├── If source code found AND no IDEA.md: State = "brownfield"
+└── If not: Continue
+
+Check 5: Has AI-DLC Rules?
 ├── Look for: aidlc-workflows/aidlc-rules/
 ├── If found: State = "fresh"
 └── If not: State = "needs-setup"
@@ -131,6 +139,47 @@ Shall I run `/init-project` now? (yes/no)
 ```
 
 If yes, invoke `/init-project`.
+
+#### State: `brownfield`
+
+```
+## Existing Codebase Detected
+
+I found source code in this workspace but no IDEA.md or AI-DLC specs.
+
+### Detected
+- [Languages found]
+- [Build system found]
+- [Approximate structure]
+
+### Recommended Path
+
+Run `/adopt` to:
+1. Analyze your existing codebase
+2. Define what you want to add or change
+3. Generate a brownfield IDEA.md
+4. Then proceed to AI-DLC spec generation
+
+### What to Expect
+
+Brownfield projects include an additional **reverse engineering stage**
+during `/init-project` that analyzes your existing code in detail.
+This takes longer than greenfield but ensures AI-DLC understands
+your system before generating specs for new work.
+
+### Options
+
+- **adopt** - Run `/adopt` (recommended)
+- **ideate** - Ignore existing code, start a new idea from scratch
+- **manual** - I'll write IDEA.md myself
+```
+
+Handle responses:
+| Response | Action |
+|----------|--------|
+| "adopt" / "yes" | Invoke `/adopt` |
+| "ideate" | Invoke `/ideate` |
+| "manual" | Show brownfield IDEA.md template (Current State / What We Are Adding / What Must Not Change) |
 
 #### State: `fresh`
 
@@ -227,6 +276,7 @@ Auto-detect and route:
 Force specific mode:
 ```
 /start ideate
+/start adopt
 /start init
 /start dev
 ```

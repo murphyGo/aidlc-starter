@@ -738,6 +738,11 @@ Create `.claude/skills/code-review/SKILL.md` from `docs/references/code-review-t
    - File organization rules
    - Project-specific anti-patterns to avoid
 
+6. **Copy protocol files**:
+   - Copy `docs/references/code-review-protocols/` directory to `.claude/skills/code-review/protocols/`
+   - Protocol files are language-agnostic deep-analysis frameworks — no customization needed
+   - Files: `INDEX.md`, `concurrency.md`, `data-integrity.md`, `error-contract.md`, `memory.md`, `performance.md`, `resource-lifecycle.md`, `security-boundary.md`
+
 #### 15.2 Copy Other Skills
 
 Copy remaining templates (no customization needed):
