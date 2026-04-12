@@ -101,6 +101,7 @@ What would you like to do?
 ```
 
 Handle responses:
+
 | Response | Action |
 |----------|--------|
 | "continue" / "dev" | Find and invoke `/dev-*` skill |
@@ -148,6 +149,7 @@ Options:
 ```
 
 Handle responses:
+
 | Response | Action |
 |----------|--------|
 | "scaffold" / "yes" | Invoke `/scaffold` |
@@ -210,6 +212,7 @@ your system before generating specs for new work.
 ```
 
 Handle responses:
+
 | Response | Action |
 |----------|--------|
 | "adopt" / "yes" | Invoke `/adopt` |
@@ -239,6 +242,7 @@ Or tell me your idea right here and I'll start capturing it.
 ```
 
 Handle responses:
+
 | Response | Action |
 |----------|--------|
 | "yes" / "ideate" | Invoke `/ideate` |
