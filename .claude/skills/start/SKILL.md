@@ -90,11 +90,14 @@ Your project is initialized and ready for development.
 | `/code-review git` | Review recent code changes |
 | `/tech-debt` | View/manage technical debt |
 | `/cross-check` | Verify requirements compliance |
+| `/build-team` | Build an agent team (lead + specialists) for parallel work |
+| `/team-lead` | Run the agent team (only if `/build-team` has been run) |
 
 ### Quick Actions
 
 - **continue** - Run the main development skill
 - **review** - Run code review on recent changes
+- **team** - Run `/team-lead` if a team exists, otherwise offer `/build-team`
 - **status** - Show project status
 
 What would you like to do?
@@ -106,6 +109,7 @@ Handle responses:
 |----------|--------|
 | "continue" / "dev" | Find and invoke `/dev-*` skill |
 | "review" | Invoke `/code-review git` |
+| "team" | If `.claude/agents/team-lead.md` exists → invoke `/team-lead`; else suggest `/build-team` |
 | "status" | Show construction progress from aidlc-state.md |
 
 #### State: `initialized`
