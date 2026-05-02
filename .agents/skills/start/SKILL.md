@@ -1,3 +1,8 @@
+---
+name: start
+description: Unified AI-DLC entry point that detects project state and routes to ideation, brownfield adoption, initialization, scaffolding, development, or status workflows.
+---
+
 # Start Skill
 
 Single entry point that detects project state and routes to the appropriate skill.
@@ -41,7 +46,7 @@ Check for indicators in this order:
 
 ```
 Check 1: Development Ready?
-├── Look for: .claude/skills/dev-*/SKILL.md
+├── Look for: .agents/skills/dev-*/SKILL.md
 ├── If found: State = "development"
 └── If not: Continue
 
@@ -109,7 +114,7 @@ Handle responses:
 |----------|--------|
 | "continue" / "dev" | Find and invoke `/dev-*` skill |
 | "review" | Invoke `/code-review git` |
-| "team" | If `.claude/agents/team-lead.md` exists → invoke `/team-lead`; else suggest `/build-team` |
+| "team" | If `.agents/agents/team-lead.md` exists → invoke `/team-lead`; else suggest `/build-team` |
 | "status" | Show construction progress from aidlc-state.md |
 
 #### State: `initialized`

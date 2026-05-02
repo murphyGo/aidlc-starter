@@ -1,3 +1,8 @@
+---
+name: adopt
+description: Onboard an existing codebase into the AI-DLC workflow by scanning the current system, guiding brownfield requirements dialogue, and generating a brownfield IDEA.md.
+---
+
 # Adopt Skill
 
 Onboard an existing codebase into the AI-DLC workflow by analyzing the current system and generating a brownfield-formatted IDEA.md.

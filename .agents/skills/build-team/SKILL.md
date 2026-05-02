@@ -1,13 +1,18 @@
+---
+name: build-team
+description: Analyze an AI-DLC project and generate a tailored Codex agent team with a singleton team lead and specialist roles.
+---
+
 # Build-Team Skill
 
-Meta-skill that analyzes the current project, proposes an agent team (one team-lead plus role-appropriate specialists with parallelism), and on user approval generates Claude Code subagents under `.claude/agents/` and a `/team-lead` orchestrator skill.
+Meta-skill that analyzes the current project, proposes an agent team (one team-lead plus role-appropriate specialists with parallelism), and on user approval generates Codex subagents under `.agents/agents/` and a `/team-lead` orchestrator skill.
 
 ## Arguments
 
 - `$ARGUMENTS` — One of:
   - (empty) — Full guided flow: analyze → propose → approve → generate
   - `propose` — Analyze and propose only, do not generate files
-  - `regenerate` — Force regeneration even if `.claude/agents/` already populated
+  - `regenerate` — Force regeneration even if `.agents/agents/` already populated
   - `roster` — Show the current team (if a team already exists)
   - `add <role>` — Add a single role to an existing team (e.g., `add security-engineer`)
 
@@ -24,12 +29,12 @@ The skill is opinionated about *team-lead is mandatory and singleton* but lets t
 ### Step 1: Validate Prerequisites
 
 1. **Detect existing team**:
-   - List `.claude/agents/*.md` and `.claude/skills/team-lead/SKILL.md`
+   - List `.agents/agents/*.md` and `.agents/skills/team-lead/SKILL.md`
    - If team exists and `$ARGUMENTS` is not `regenerate` / `roster` / `add ...`:
      ```
      ## Team Already Exists
 
-     Found agents in .claude/agents/:
+     Found agents in .agents/agents/:
      [list with one-line description from each agent's frontmatter]
 
      Options:
@@ -147,7 +152,7 @@ Accept partial approvals: e.g., "approve but drop operator" → drop, re-confirm
 
 ### Step 5: Generate Agent Files
 
-For each approved role, write `.claude/agents/<role>.md` using the **Subagent Template** below. Substitute placeholders with project-specific content drawn from Step 2 signals.
+For each approved role, write `.agents/agents/<role>.md` using the **Subagent Template** below. Substitute placeholders with project-specific content drawn from Step 2 signals.
 
 Mandatory frontmatter fields:
 - `name`: kebab-case, must match filename stem
@@ -174,9 +179,9 @@ For multi-instance roles (e.g., `developer × 3`), generate **one** agent file. 
 
 ### Step 6: Generate Team-Lead Skill
 
-Write `.claude/skills/team-lead/SKILL.md` using the **Team-Lead Skill Template** below. The team-lead is invoked by the user (`/team-lead`), reads project state, and decides between autonomous vs directed mode.
+Write `.agents/skills/team-lead/SKILL.md` using the **Team-Lead Skill Template** below. The team-lead is invoked by the user (`/team-lead`), reads project state, and decides between autonomous vs directed mode.
 
-Also write `.claude/agents/team-lead.md` — the team-lead also exists as a subagent so other tooling could invoke it via the Agent tool, but the **primary entry point is the skill**.
+Also write `.agents/agents/team-lead.md` — the team-lead also exists as a subagent so other tooling could invoke it via the Agent tool, but the **primary entry point is the skill**.
 
 ### Step 7: Summary and Next Steps
 
@@ -186,9 +191,9 @@ Also write `.claude/agents/team-lead.md` — the team-lead also exists as a suba
 ### Generated
 | File | Purpose |
 |------|---------|
-| .claude/agents/team-lead.md | Orchestrator |
-| .claude/agents/<role>.md | [N specialist files] |
-| .claude/skills/team-lead/SKILL.md | User entry point — `/team-lead` |
+| .agents/agents/team-lead.md | Orchestrator |
+| .agents/agents/<role>.md | [N specialist files] |
+| .agents/skills/team-lead/SKILL.md | User entry point — `/team-lead` |
 | docs/AGENT-TEAM.md | Roster + delegation map (reference) |
 
 ### How to Use
@@ -204,7 +209,7 @@ Also write `.claude/agents/team-lead.md` — the team-lead also exists as a suba
 
 - Add a role: `/build-team add <role>`
 - Replace team: `/build-team regenerate`
-- Edit an agent: edit `.claude/agents/<role>.md` directly — frontmatter `description` controls delegation routing
+- Edit an agent: edit `.agents/agents/<role>.md` directly — frontmatter `description` controls delegation routing
 
 ### Next Step
 
@@ -228,7 +233,7 @@ Reference for which roles to consider and their default responsibilities. **Alwa
 | architect | Functional design, NFR design, infrastructure design, ADRs | Construction (design stages) |
 | developer | Code generation, unit tests, refactors per unit-of-work | Construction (code-generation) |
 | qa | Test plans, integration/e2e tests, cross-check execution | Construction (build-and-test), cross-check |
-| reviewer | Fresh-eyes code review using protocols in `.claude/skills/code-review/protocols/` | Cross-cuts construction |
+| reviewer | Fresh-eyes code review using protocols in `.agents/skills/code-review/protocols/` | Cross-cuts construction |
 
 ### Conditionally suggested (require a signal)
 
@@ -252,7 +257,7 @@ If a project signal points to a role not in this catalog, propose it with a cust
 
 ## Subagent Template
 
-Generate each `.claude/agents/<role>.md` with this structure. Replace `{{...}}` placeholders.
+Generate each `.agents/agents/<role>.md` with this structure. Replace `{{...}}` placeholders.
 
 ```markdown
 ---
@@ -296,7 +301,7 @@ You are the **{{role-name}}** for the {{project-name}} project.
 - `docs/requirements.md` — functional requirements
 - `aidlc-docs/construction/{unit-name}/functional-design/` — design decisions
 - `aidlc-docs/construction/plans/{unit-name}-code-generation-plan.md` — current step list
-- `CLAUDE.md` — project conventions
+- `AGENTS.md` — project conventions
 }}
 
 ## How You Are Invoked
@@ -314,7 +319,7 @@ You must:
 
 ## Project-Specific Rules
 
-{{From CLAUDE.md "Important Conventions" + any extension rules active in aidlc-state.md.
+{{From AGENTS.md "Important Conventions" + any extension rules active in aidlc-state.md.
 e.g.:
 - Skills don't auto-commit — show changes, wait for approval
 - Use Markdown tables for status, not free text
@@ -342,7 +347,7 @@ When you finish a delegation, return a structured report:
 
 ## Team-Lead Skill Template
 
-Generate `.claude/skills/team-lead/SKILL.md` with this structure:
+Generate `.agents/skills/team-lead/SKILL.md` with this structure:
 
 ```markdown
 # Team-Lead Skill
@@ -512,8 +517,8 @@ Also append to `aidlc-docs/audit.md` per AIDLC audit format if any AIDLC stage a
 
 | Situation | Response |
 |-----------|----------|
-| No agents in `.claude/agents/` | Suggest `/build-team` first, exit |
-| `docs/AGENT-TEAM.md` missing | Re-derive from `.claude/agents/*.md` frontmatter |
+| No agents in `.agents/agents/` | Suggest `/build-team` first, exit |
+| `docs/AGENT-TEAM.md` missing | Re-derive from `.agents/agents/*.md` frontmatter |
 | Specialist returns blocked | Surface blocker to user, propose unblock options |
 | Agent goes out of scope | Reject the work, re-delegate with tighter scope |
 | User rejects synthesis | Offer revert or targeted re-delegation |

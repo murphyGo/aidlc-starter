@@ -1,3 +1,8 @@
+---
+name: ideate
+description: Capture a rough project idea through concise interactive dialogue and generate or refine IDEA.md for AI-DLC initialization.
+---
+
 # Ideate Skill
 
 Capture a lightning idea through interactive dialogue and generate IDEA.md.

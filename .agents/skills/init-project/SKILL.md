@@ -1,3 +1,8 @@
+---
+name: init-project
+description: Bootstrap a project from IDEA.md or project vision into AI-DLC specifications, refinement artifacts, and project-specific development skills.
+---
+
 # Init Project Skill
 
 Bootstrap a new project from an idea to AI-DLC specs and dev skills.
@@ -12,7 +17,7 @@ Bootstrap a new project from an idea to AI-DLC specs and dev skills.
 ## Objective
 
 Transform a rough idea in inception.md into:
-1. Enhanced requirements through Claude-powered interactive refinement
+1. Enhanced requirements through Codex-powered interactive refinement
 2. AI-DLC specification documents (vision.md, tech-env.md, aidlc-docs/)
 3. Project-specific development skills
 
@@ -76,7 +81,7 @@ When quick mode is triggered, execute this streamlined path **instead of** Stage
 
 **What is skipped**: User stories, workflow planning, application design, units generation, extension opt-in, NFR analysis, audit log, refinement-questions file, DESIGN.md, TECH-DEBT.md, code-review/tech-debt/cross-check skills.
 
-**What is kept**: Idea analysis, lightweight requirements, minimal AI-DLC state, dev skill, CLAUDE.md, README.md.
+**What is kept**: Idea analysis, lightweight requirements, minimal AI-DLC state, dev skill, AGENTS.md, README.md.
 
 ### Quick Step 1: Read and Analyze Idea
 
@@ -176,14 +181,14 @@ Do not create audit.md, refinement-questions.md, refinement-log.md, vision.md, t
 
 ### Quick Step 5: Generate Dev Skill
 
-Same as full-mode Step 14 — create `.claude/skills/dev-{project}/SKILL.md` from `docs/references/dev-skill-template.md`. Customize project name and tech stack commands.
+Same as full-mode Step 14 — create `.agents/skills/dev-{project}/SKILL.md` from `docs/references/dev-skill-template.md`. Customize project name and tech stack commands.
 
 The dev skill reads `aidlc-state.md` and handles missing units by treating the whole project as a single implicit unit.
 
 ### Quick Step 6: Generate Essential Files
 
 Create only:
-- `CLAUDE.md` — shortened version (Quick Commands table + Key Files table + Tech Stack)
+- `AGENTS.md` — shortened version (Quick Commands table + Key Files table + Tech Stack)
 - `README.md` — same as full-mode Step 16.3
 
 **Skip**: DESIGN.md, TECH-DEBT.md, code-review skill, tech-debt skill, cross-check skill.
@@ -199,8 +204,8 @@ Create only:
 ### Created
 - docs/requirements.md (lightweight)
 - aidlc-docs/aidlc-state.md (minimal tracking)
-- .claude/skills/dev-{name}/SKILL.md
-- CLAUDE.md
+- .agents/skills/dev-{name}/SKILL.md
+- AGENTS.md
 - README.md
 
 ### Skipped (available via full `/init-project`)
@@ -468,7 +473,7 @@ Create `docs/requirements.md` with this structure:
 ## Refinement Dialogue
 
 ### Round 1
-**Claude's Analysis**: [summary]
+**Codex's Analysis**: [summary]
 **User's Response**: [response]
 **Ambiguity Check**: [Any vague language detected? Follow-up needed?]
 **Outcome**: [what was decided]
@@ -876,7 +881,7 @@ If EXECUTE:
 
 ### Step 14: Generate Project-Specific Dev Skill
 
-Create `.claude/skills/dev-{project}/SKILL.md`:
+Create `.agents/skills/dev-{project}/SKILL.md`:
 
 - Use `docs/references/dev-skill-template.md` as template
 - Customize for:
@@ -889,7 +894,7 @@ Create `.claude/skills/dev-{project}/SKILL.md`:
 
 #### 15.1 Generate Customized Code Review Skill
 
-Create `.claude/skills/code-review/SKILL.md` from `docs/references/code-review-template.md`:
+Create `.agents/skills/code-review/SKILL.md` from `docs/references/code-review-template.md`:
 
 1. **Read project's Technical Decisions** from `docs/requirements.md`
 2. **Customize template** by replacing placeholders:
@@ -930,7 +935,7 @@ Create `.claude/skills/code-review/SKILL.md` from `docs/references/code-review-t
    - Project-specific anti-patterns to avoid
 
 6. **Copy protocol files**:
-   - Copy `docs/references/code-review-protocols/` directory to `.claude/skills/code-review/protocols/`
+   - Copy `docs/references/code-review-protocols/` directory to `.agents/skills/code-review/protocols/`
    - Protocol files are language-agnostic deep-analysis frameworks — no customization needed
    - Files: `INDEX.md`, `concurrency.md`, `data-integrity.md`, `error-contract.md`, `memory.md`, `performance.md`, `resource-lifecycle.md`, `security-boundary.md`
 
@@ -940,12 +945,12 @@ Copy remaining templates (no customization needed):
 
 | Template | Destination |
 |----------|-------------|
-| `docs/references/tech-debt-template.md` | `.claude/skills/tech-debt/SKILL.md` |
-| `docs/references/cross-check-template.md` | `.claude/skills/cross-check/SKILL.md` |
+| `docs/references/tech-debt-template.md` | `.agents/skills/tech-debt/SKILL.md` |
+| `docs/references/cross-check-template.md` | `.agents/skills/cross-check/SKILL.md` |
 
-### Step 16: Create CLAUDE.md
+### Step 16: Create AGENTS.md
 
-Generate project root `CLAUDE.md`:
+Generate project root `AGENTS.md`:
 
 ```markdown
 # {Project Name}
@@ -1175,12 +1180,12 @@ cd {project-name}
 
 ## Development
 
-This project uses AI-DLC methodology with Claude Code skills.
+This project uses AI-DLC methodology with Codex skills.
 
 ### Quick Start
 
 ```bash
-claude
+Codex
 /dev-{name}
 ```
 
@@ -1231,22 +1236,22 @@ claude
 
 ### Stage 2: Project Setup ✅
 - Skills generated: /dev-{name}, /code-review, /tech-debt, /cross-check
-- Documentation: CLAUDE.md, README.md, DESIGN.md
+- Documentation: AGENTS.md, README.md, DESIGN.md
 - Development tracking: TECH-DEBT.md
 
 ### Files Created
 - README.md (project readme)
-- CLAUDE.md (Claude context)
+- AGENTS.md (Codex context)
 - docs/requirements.md
 - docs/refinement-log.md
 - docs/vision.md
 - docs/tech-env.md
 - docs/DESIGN.md
 - docs/TECH-DEBT.md
-- .claude/skills/dev-{name}/SKILL.md
-- .claude/skills/code-review/SKILL.md
-- .claude/skills/tech-debt/SKILL.md
-- .claude/skills/cross-check/SKILL.md
+- .agents/skills/dev-{name}/SKILL.md
+- .agents/skills/code-review/SKILL.md
+- .agents/skills/tech-debt/SKILL.md
+- .agents/skills/cross-check/SKILL.md
 - aidlc-docs/aidlc-state.md
 - aidlc-docs/audit.md
 - aidlc-docs/inception/requirements/requirements.md
@@ -1284,7 +1289,7 @@ Removing aidlc-starter specific files...
 Ask user about template files:
 
 ```
-The skill templates in docs/references/ have been copied to .claude/skills/.
+The skill templates in docs/references/ have been copied to .agents/skills/.
 
 Keep templates for reference? (yes/no)
 - yes: Keep docs/references/ for future reference
@@ -1297,9 +1302,9 @@ Remove skills that are only needed during initialization:
 
 ```
 Removing bootstrap skills (no longer needed)...
-- .claude/skills/start/
-- .claude/skills/ideate/
-- .claude/skills/init-project/
+- .agents/skills/start/
+- .agents/skills/ideate/
+- .agents/skills/init-project/
 ```
 
 ### 13.4 Present Cleanup Summary
@@ -1310,9 +1315,9 @@ Removing bootstrap skills (no longer needed)...
 ### Removed (aidlc-starter specific):
 - docs/PROJECT-VISION.md
 - docs/REVIEW.md
-- .claude/skills/start/
-- .claude/skills/ideate/
-- .claude/skills/init-project/
+- .agents/skills/start/
+- .agents/skills/ideate/
+- .agents/skills/init-project/
 - docs/references/ (if user chose to remove)
 
 ### Kept:

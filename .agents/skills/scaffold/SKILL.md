@@ -1,3 +1,8 @@
+---
+name: scaffold
+description: Generate project directory structure, config files, and boilerplate from AI-DLC specifications.
+---
+
 # Scaffold Skill
 
 Generate project directory structure, config files, and boilerplate based on AI-DLC specs.
