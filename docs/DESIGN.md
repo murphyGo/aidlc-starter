@@ -124,6 +124,7 @@ AI-DLC Starter is a meta-template that transforms rough ideas into fully-specifi
 | Skill format | Markdown with structured sections | Human-readable, Claude-parseable |
 | Skill location | .claude/skills/{name}/SKILL.md | Standard Claude Code convention |
 | Common vs custom | Templates + generated | Reuse patterns, customize per project |
+| Output templates | Externalized to `init-project/templates/`, loaded just-in-time per step | Keeps the bootstrap skill prompt lean and high-altitude; verbatim artifact boilerplate lives outside the skill and is read only when a step needs it |
 
 **Skill Categories**:
 
