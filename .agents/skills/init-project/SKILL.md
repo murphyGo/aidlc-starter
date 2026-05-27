@@ -21,6 +21,10 @@ Transform a rough idea in inception.md into:
 2. AI-DLC specification documents (vision.md, tech-env.md, aidlc-docs/)
 3. Project-specific development skills
 
+## Output Templates (just-in-time)
+
+The verbatim markdown for every artifact this skill writes lives in `templates/` next to this file, **not inline below**. When a step says "generate `<path>` from `templates/<name>.md`", read that template at that moment, substitute the `{placeholders}` from prior-stage artifacts, and write it to the destination. See `templates/INDEX.md` for the full map. A filled-in, end-to-end example of these artifacts is in `examples/book-tracker/` at the project root — consult it when unsure what "good" output looks like.
+
 ---
 
 ## Execution Steps
@@ -114,68 +118,11 @@ Or say **"go"** to proceed with what we have.
 
 ### Quick Step 3: Generate Lightweight Requirements
 
-Create `docs/requirements.md` with simplified structure:
-
-```markdown
-# Project Requirements: {Project Name}
-
-*Generated via quick mode on {YYYY-MM-DD}*
-
-## Overview
-
-[Problem + target users in 2-3 sentences]
-
-## Features
-
-| # | Feature | Priority | Notes |
-|---|---------|----------|-------|
-| 1 | [feature] | Must-have | [brief] |
-| 2 | [feature] | Must-have | [brief] |
-| 3 | [feature] | Should-have | [brief] |
-
-## Technical Decisions
-
-| Component | Choice | Rationale |
-|-----------|--------|-----------|
-| Language | [choice or smart default] | [why] |
-| Framework | [choice or smart default] | [why] |
-| Database | [choice or "TBD"] | [why] |
-
-## Constraints
-
-- [Any mentioned constraints, or "None specified"]
-
-## Out of Scope
-
-- [Anything explicitly deferred]
-```
+Generate `docs/requirements.md` from `templates/requirements-quick.md`.
 
 ### Quick Step 4: Generate Minimal AI-DLC State
 
-Create `aidlc-docs/aidlc-state.md` with simplified tracking:
-
-```markdown
-# AI-DLC State (Quick Mode)
-
-## Project Information
-- **Project Name**: {name}
-- **Project Type**: Greenfield (Quick)
-- **Start Date**: {YYYY-MM-DD}
-- **Mode**: Quick — simplified inception, direct to construction
-
-## Stage Progress
-
-| Stage | Status |
-|-------|--------|
-| Requirements | ✅ Complete (quick) |
-| Code Generation | ⏳ Pending |
-| Build and Test | ⏳ Pending |
-
-## Notes
-
-- Generated via `/init-project --quick`
-- To upgrade to full AI-DLC (user stories, app design, units), run `/init-project` — existing requirements.md will be preserved and enhanced.
-```
+Generate `aidlc-docs/aidlc-state.md` from `templates/aidlc-state-quick.md`.
 
 Do not create audit.md, refinement-questions.md, refinement-log.md, vision.md, tech-env.md, or any `aidlc-docs/inception/` subdirectories.
 
@@ -188,8 +135,8 @@ The dev skill reads `aidlc-state.md` and handles missing units by treating the w
 ### Quick Step 6: Generate Essential Files
 
 Create only:
-- `AGENTS.md` — shortened version (Quick Commands table + Key Files table + Tech Stack)
-- `README.md` — same as full-mode Step 16.3
+- `AGENTS.md` — generate from `templates/AGENTS-quick.md` (the shortened quick-mode variant; do NOT use the full `templates/AGENTS.md`)
+- `README.md` — from `templates/README.md` (same as full-mode Step 16.3)
 
 **Skip**: DESIGN.md, TECH-DEBT.md, code-review skill, tech-debt skill, cross-check skill.
 
@@ -239,7 +186,7 @@ Stage 0 uses a conversational dialogue style (proceed/skip/discuss) rather than 
    - **Minimal**: Simple, clear idea with obvious tech choices → fewer rounds, focus on gaps only
    - **Standard**: Normal complexity → full analysis with 3-5 categories
    - **Comprehensive**: Complex multi-service system → deep analysis across all categories, more rounds
-3. **Mandatory ambiguity analysis**: After each user response, analyze for vague language ("depends", "maybe", "not sure"). If found, create targeted follow-up questions before proceeding.
+3. **Resolve ambiguity before advancing**: when a user response stays vague on something that affects architecture or scope, ask a targeted follow-up rather than guessing.
 
 ### Step 1: Read and Analyze Idea
 
@@ -256,6 +203,8 @@ Stage 0 uses a conversational dialogue style (proceed/skip/discuss) rather than 
    - Project Name
    - Vision
    - Core Features
+
+> Reference example: `examples/book-tracker/1-idea.md` → `2-requirements.md` shows how a rough idea becomes refined requirements.
 
 ### Step 2: Deep Analysis
 
@@ -387,133 +336,15 @@ Handle user responses:
 
 **AIDLC-Compatible Format**: Generate `docs/requirements.md` as the **single source of truth** for requirements. This file uses AIDLC-compatible structure so that Step 9's bridging becomes a lightweight reference rather than a full duplicate.
 
-Create `docs/requirements.md` with this structure:
+Generate `docs/requirements.md` from `templates/requirements.md`.
 
-```markdown
-# Project Requirements: {Project Name}
-
-*Generated via interactive refinement on {date}*
-
-## 1. Overview
-
-### Problem Statement
-[What problem does this solve - from understanding, not just copying]
-
-### Target Users
-[Who will use this - inferred or specified]
-
-### Success Metrics
-[How do we measure success - explicit or suggested]
-
-## 2. Functional Requirements
-
-### FR-001: {Feature Name}
-- **Description**: Clear description of the feature
-- **User Story**: As a [user], I want to [action] so that [benefit]
-- **Acceptance Criteria**:
-  - [ ] Criterion 1
-  - [ ] Criterion 2
-- **Priority**: Must-have / Should-have / Nice-to-have
-- **Notes**: Clarifications from refinement dialogue
-
-[Repeat for each feature]
-
-## 3. Non-Functional Requirements
-
-### NFR-001: Performance
-- [Specific requirements]
-
-### NFR-002: Security
-- [Specific requirements]
-
-### NFR-003: Scalability
-- [Specific requirements]
-
-### NFR-004: Reliability
-- [Specific requirements]
-
-## 4. Technical Decisions
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Language | {choice} | {why} |
-| Framework | {choice} | {why} |
-| Database | {choice} | {why} |
-| Infrastructure | {choice} | {why} |
-
-## 5. Constraints & Assumptions
-
-### Constraints
-- [Known limitations]
-
-### Assumptions
-- [Assumptions made during refinement]
-
-## 6. Out of Scope
-
-- [Features explicitly deferred]
-- [Future considerations]
-
-## 7. Open Questions
-
-- [Items requiring further clarification]
-```
+> Reference example: `examples/book-tracker/2-requirements.md` shows a filled-in requirements doc.
 
 ### Step 6: Create Refinement Log and Question Record
 
-**6.1** Save the dialogue to `docs/refinement-log.md`:
+**6.1** Generate `docs/refinement-log.md` from `templates/refinement-log.md` (record the actual dialogue rounds).
 
-```markdown
-# Refinement Log: {Project Name}
-
-**Date**: {date}
-**Depth Level**: [Minimal/Standard/Comprehensive]
-**Initial idea**: [summary of original content from IDEA.md or equivalent]
-
-## Refinement Dialogue
-
-### Round 1
-**Codex's Analysis**: [summary]
-**User's Response**: [response]
-**Ambiguity Check**: [Any vague language detected? Follow-up needed?]
-**Outcome**: [what was decided]
-
-[Continue for each round]
-
-## Final Changes
-
-| Original | Refined | Reason |
-|----------|---------|--------|
-| [original text] | [new text] | [why changed] |
-
-## Suggestions Applied
-- [x] Suggestion 1
-- [ ] Suggestion 2 (skipped - reason)
-- [x] Suggestion 3
-```
-
-**6.2** Save key questions and answers to `docs/refinement-questions.md` (AIDLC-compatible format for traceability):
-
-```markdown
-# Refinement Questions: {Project Name}
-
-**Date**: {date}
-
-## Architecture & Tech Stack
-Q1: [Question asked during refinement]
-[Answer]: [User's response]
-
-## Scope & Features
-Q2: [Question]
-[Answer]: [Response]
-
-## Non-Functional Requirements
-Q3: [Question]
-[Answer]: [Response]
-
-## Ambiguity Resolutions
-[If any follow-up questions were asked due to vague responses, document them here]
-```
+**6.2** Generate `docs/refinement-questions.md` from `templates/refinement-questions.md` (AIDLC-compatible format for traceability — capture the key Q&A using `[Answer]:` tags).
 
 ---
 
@@ -521,51 +352,7 @@ Q3: [Question]
 
 ### Step 7: Generate AI-DLC Input Documents
 
-Create `docs/vision.md` (AI-DLC format):
-
-```markdown
-# Vision Document
-
-## Project Overview
-[From requirements.md Overview section]
-
-## Goals
-[Derived from requirements]
-
-## Scope
-### In Scope
-[From FR requirements]
-
-### Out of Scope
-[From Out of Scope section]
-
-## Stakeholders
-[From Target Users]
-
-## Success Criteria
-[From Success Metrics]
-```
-
-Create `docs/tech-env.md` (AI-DLC format):
-
-```markdown
-# Technical Environment
-
-## Technology Stack
-[From Technical Decisions]
-
-## Development Environment
-- [Standard setup based on tech stack]
-
-## Deployment Target
-[From Infrastructure decision or inferred]
-
-## Existing Systems
-[From Constraints if any]
-
-## Technical Constraints
-[From Constraints section]
-```
+Generate `docs/vision.md` from `templates/vision.md` and `docs/tech-env.md` from `templates/tech-env.md` (both AI-DLC format, derived from `docs/requirements.md`).
 
 ### Step 8: Initialize AI-DLC State (Workspace Detection)
 
@@ -576,58 +363,11 @@ Key adaptations for init-project:
 - No reverse engineering needed
 - Auto-proceed (no user approval required)
 
-1. Create `aidlc-docs/aidlc-state.md`:
+1. Generate `aidlc-docs/aidlc-state.md` from `templates/aidlc-state.md`.
 
-```markdown
-# AI-DLC State
+   > Reference example: `examples/book-tracker/3-aidlc-state.md` shows a filled-in state file.
 
-## Project Information
-- **Project Name**: {Project Name}
-- **Project Type**: Greenfield
-- **Start Date**: {ISO 8601 timestamp}
-- **Workspace Root**: {absolute path}
-
-## Code Location Rules
-- Application code: Workspace root (NEVER in aidlc-docs/)
-- Documentation: aidlc-docs/ only
-
-## Stage Progress
-
-### INCEPTION PHASE
-| Stage | Status | Date |
-|-------|--------|------|
-| Workspace Detection | ✅ Complete | {date} |
-| Reverse Engineering | ⏭️ Skipped (Greenfield) | {date} |
-| Requirements Analysis | ✅ Complete (via interactive refinement) | {date} |
-| User Stories | ⏳ Pending | |
-| Workflow Planning | ⏳ Pending | |
-| Application Design | ⏳ Pending | |
-| Units Generation | ⏳ Pending | |
-
-### CONSTRUCTION PHASE
-| Stage | Status | Date |
-|-------|--------|------|
-| Determined by Workflow Planning | ⏳ Pending | |
-
-## Extension Configuration
-| Extension | Enabled | Opted In |
-|-----------|---------|----------|
-| (none configured) | | |
-```
-
-2. Create `aidlc-docs/audit.md` with initial entry:
-
-```markdown
-# AI-DLC Audit Log
-
-## Project Initialization
-**Timestamp**: {ISO 8601}
-**User Input**: "{original idea from IDEA.md — first line or summary}"
-**AI Response**: "Project initialized via /init-project. Interactive refinement completed."
-**Context**: Stage 1 — AI-DLC State Initialization
-
----
-```
+2. Generate `aidlc-docs/audit.md` (initial entry) from `templates/audit-init.md`.
 
 3. Present brief status:
 ```
@@ -664,29 +404,7 @@ Key adaptations for init-project:
    - If user opts OUT: do NOT load full rules (saves context)
    - Record decisions in `aidlc-docs/aidlc-state.md` under `## Extension Configuration`
 
-4. Create `aidlc-docs/inception/requirements/requirements.md` as a **reference document**:
-   ```markdown
-   # Requirements Reference
-
-   ## Intent Analysis
-   - Request Clarity: [Clear/Mostly Clear/Vague]
-   - Request Type: New Project
-   - Scope: [Small/Medium/Large]
-   - Complexity: [Low/Medium/High]
-
-   ## Source
-   Primary requirements document: `docs/requirements.md`
-   Refinement questions: `docs/refinement-questions.md`
-   Refinement log: `docs/refinement-log.md`
-
-   ## Extension Configuration
-   [List enabled extensions and their impact on requirements]
-
-   ## Traceability Summary
-   - Functional Requirements: FR-001 through FR-{N}
-   - Non-Functional Requirements: NFR-001 through NFR-{N}
-   - All requirement IDs are defined in docs/requirements.md
-   ```
+4. Generate `aidlc-docs/inception/requirements/requirements.md` (a **reference document**, not a duplicate) from `templates/requirements-reference.md`.
 
 5. Update `aidlc-docs/aidlc-state.md`: confirm Requirements Analysis complete, update Extension Configuration
 
@@ -782,7 +500,7 @@ Options:
      - Code Generation: ALWAYS
      - Build and Test: ALWAYS
    - Generate workflow visualization (Mermaid diagram)
-   - **MANDATORY: Content Validation** (per `common/content-validation.md`): Validate Mermaid diagram syntax before writing. Use only basic ASCII for any text diagrams (`+` `-` `|` `^` `v` `<` `>`). Escape special characters.
+   - **Content validation** (per `common/content-validation.md`): validate Mermaid syntax before writing; validate any ASCII diagrams against `common/ascii-diagram-standards.md` so they render cleanly.
    - **Extension compliance**: If extensions are enabled, check applicable extension rules and include compliance status in the execution plan
 
 3. Create `aidlc-docs/inception/plans/execution-plan.md`
@@ -950,72 +668,7 @@ Copy remaining templates (no customization needed):
 
 ### Step 16: Create AGENTS.md
 
-Generate project root `AGENTS.md`:
-
-```markdown
-# {Project Name}
-
-## Overview
-{Brief description from requirements}
-
----
-
-## Important: Before Development
-
-Run `/dev-{name}` to:
-1. See current construction stage and unit progress
-2. Get the next task to work on (from AIDLC per-stage plan files)
-3. Follow the AIDLC Construction workflow
-
----
-
-## Quick Commands
-
-| Skill | Purpose | When to Use |
-|-------|---------|-------------|
-| `/dev-{name}` | Main development driver | Start here for any development work |
-| `/code-review git` | Review code changes | Before committing |
-| `/tech-debt` | Manage technical debt | Track and prioritize issues |
-| `/cross-check` | Verify requirements | After completing a phase |
-
----
-
-## Key Documents
-
-| Document | Purpose |
-|----------|---------|
-| `aidlc-docs/aidlc-state.md` | **Start here** - AIDLC state and construction progress |
-| `docs/requirements.md` | Project requirements and acceptance criteria |
-| `docs/DESIGN.md` | Architecture decisions and rationale |
-| `docs/TECH-DEBT.md` | Technical debt registry |
-| `aidlc-docs/` | AI-DLC generated specifications |
-
----
-
-## Development Workflow
-
-```
-1. /dev-{name}          → Get next task from AIDLC construction stage
-2. Implement            → Write code following requirements
-3. /code-review git     → Review before committing
-4. Commit               → Save your work
-5. /dev-{name}          → Mark complete, get next task
-```
-
----
-
-## Project Structure
-
-```
-{Generated structure based on tech stack}
-```
-
----
-
-## Tech Stack
-
-{From technical decisions - language, framework, database, etc.}
-```
+Generate project root `AGENTS.md` from `templates/AGENTS.md`.
 
 ### Step 16.1: Create DESIGN.md
 
@@ -1024,190 +677,19 @@ Run `/dev-{name}` to:
 **Enhanced with AI-DLC outputs**:
 - If `aidlc-docs/inception/application-design/application-design.md` exists, use it as the primary source for architecture, components, and dependencies
 - If `aidlc-docs/inception/application-design/component-dependency.md` exists, use it for component relationship diagrams
-- **MANDATORY: Content Validation** — validate any ASCII diagrams per `common/content-validation.md` (basic ASCII only, no Unicode box-drawing)
+- **Content validation** — validate any ASCII diagrams against `common/ascii-diagram-standards.md` so they render cleanly
 
-Generate `docs/DESIGN.md`:
+Generate `docs/DESIGN.md` from `templates/DESIGN.md`.
 
-```markdown
-# Design Document: {Project Name}
-
-*Generated on {date}*
-*Source: aidlc-docs/inception/application-design/ (see AI-DLC artifacts for detailed design)*
-
-## Overview
-
-{Brief description of the system architecture based on requirements}
-
-## Architecture
-
-### High-Level Design
-
-```
-{ASCII diagram showing main components and their relationships}
-```
-
-### Components
-
-| Component | Responsibility | Technology |
-|-----------|---------------|------------|
-| {component} | {what it does} | {tech choice} |
-
-## Technical Decisions
-
-### TD-001: {Decision Topic}
-
-**Choice**: {What was chosen}
-**Rationale**: {Why this choice was made}
-**Alternatives Considered**: {What else was evaluated}
-
-## Data Model
-
-{Entity descriptions and relationships based on requirements}
-
-## API Design (if applicable)
-
-{Endpoint patterns, authentication approach, etc.}
-
-## Non-Functional Considerations
-
-### Performance
-{How performance requirements will be met}
-
-### Security
-{Security measures and approach}
-
-### Scalability
-{Scaling strategy}
-
----
-
-*Update this document as architectural decisions evolve during development.*
-```
+> Reference example: `examples/book-tracker/4-final-structure.md` shows the resulting project shape.
 
 ### Step 16.2: Create TECH-DEBT.md
 
-Generate `docs/TECH-DEBT.md`:
-
-```markdown
-# Technical Debt Registry
-
-## Summary
-
-| Priority | Count | Oldest |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 0 | - |
-| Medium | 0 | - |
-| Low | 0 | - |
-
----
-
-## Active Items
-
-### Critical Priority
-
-_No critical items._
-
-### High Priority
-
-_No high priority items._
-
-### Medium Priority
-
-_No medium priority items._
-
-### Low Priority
-
-_No low priority items._
-
----
-
-## Resolved Items
-
-_No resolved items yet._
-
----
-
-*Managed by `/tech-debt` skill. Run `/tech-debt add` to add new items.*
-```
+Generate `docs/TECH-DEBT.md` from `templates/TECH-DEBT.md`.
 
 ### Step 16.3: Create README.md
 
-Generate project `README.md` (replace aidlc-starter README):
-
-```markdown
-# {Project Name}
-
-{One-liner from IDEA.md}
-
-## Overview
-
-{Problem statement from requirements}
-
-## Features
-
-- {Feature 1 from requirements}
-- {Feature 2 from requirements}
-- {Feature 3 from requirements}
-
-## Tech Stack
-
-| Component | Technology |
-|-----------|------------|
-| Language | {choice} |
-| Framework | {choice} |
-| Database | {choice} |
-
-## Getting Started
-
-### Prerequisites
-
-- {Based on tech stack}
-
-### Installation
-
-```bash
-# Clone the repository
-git clone {repo-url}
-cd {project-name}
-
-# Install dependencies
-{install command based on tech stack}
-
-# Run the application
-{run command based on tech stack}
-```
-
-## Development
-
-This project uses AI-DLC methodology with Codex skills.
-
-### Quick Start
-
-```bash
-Codex
-/dev-{name}
-```
-
-### Development Workflow
-
-1. Run `/dev-{name}` to get the next development task
-2. Implement following `docs/requirements.md`
-3. Run `/code-review git` before committing
-4. Track technical debt with `/tech-debt`
-
-### Key Documents
-
-| Document | Description |
-|----------|-------------|
-| `aidlc-docs/aidlc-state.md` | AIDLC state and progress |
-| `docs/requirements.md` | Detailed requirements |
-| `docs/DESIGN.md` | Architecture decisions |
-
-## License
-
-{License - default to MIT or ask user}
-```
+Generate project `README.md` (replacing the aidlc-starter README) from `templates/README.md`.
 
 ---
 
@@ -1274,7 +756,7 @@ Your project is ready for development!
 
 After project initialization, remove aidlc-starter specific files:
 
-### 13.1 Remove Starter Documentation
+### 18.1 Remove Starter Documentation
 
 Delete files that describe aidlc-starter (not user's project):
 
@@ -1282,9 +764,10 @@ Delete files that describe aidlc-starter (not user's project):
 Removing aidlc-starter specific files...
 - docs/PROJECT-VISION.md (aidlc-starter meta-documentation)
 - docs/REVIEW.md (aidlc-starter analysis)
+- examples/ (aidlc-starter worked example — not part of the user's project)
 ```
 
-### 13.2 Remove Template References (Optional)
+### 18.2 Remove Template References (Optional)
 
 Ask user about template files:
 
@@ -1296,9 +779,9 @@ Keep templates for reference? (yes/no)
 - no: Remove docs/references/
 ```
 
-### 13.3 Remove Bootstrap Skills
+### 18.3 Remove Bootstrap Skills
 
-Remove skills that are only needed during initialization:
+Remove skills that are only needed during initialization (this also removes `init-project/templates/`, which is only used during init):
 
 ```
 Removing bootstrap skills (no longer needed)...
@@ -1307,7 +790,7 @@ Removing bootstrap skills (no longer needed)...
 - .agents/skills/init-project/
 ```
 
-### 13.4 Present Cleanup Summary
+### 18.4 Present Cleanup Summary
 
 ```
 ## Cleanup Complete
@@ -1318,6 +801,7 @@ Removing bootstrap skills (no longer needed)...
 - .agents/skills/start/
 - .agents/skills/ideate/
 - .agents/skills/init-project/
+- examples/
 - docs/references/ (if user chose to remove)
 
 ### Kept:
@@ -1363,11 +847,9 @@ Run `/dev-{name}` to begin.
   ---
   ```
 
-### Content Validation (MANDATORY before file creation)
-- Validate Mermaid diagram syntax
-- Validate ASCII diagrams: basic ASCII only (`+` `-` `|` `^` `v` `<` `>`), NO Unicode box-drawing
-- ALL lines in a box must have EXACTLY the same character count
-- Escape special characters properly
+### Content Validation (before file creation)
+- Validate Mermaid diagram syntax before writing.
+- For text/ASCII diagrams, follow `common/ascii-diagram-standards.md` so they render cleanly (basic ASCII, equal-width boxes); escape special characters as needed.
 - Reference: `common/content-validation.md`
 
 ### Extension Enforcement (if any extensions enabled)

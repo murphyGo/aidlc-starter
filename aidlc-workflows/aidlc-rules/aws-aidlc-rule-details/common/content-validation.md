@@ -10,7 +10,7 @@
 
 1. **LOAD** `common/ascii-diagram-standards.md`
 2. **VALIDATE** each diagram:
-   - Count characters per line (all lines MUST be same width)
+   - Keep box lines equal width so corners align (no need to count characters)
    - Use ONLY: `+` `-` `|` `^` `v` `<` `>` and spaces
    - NO Unicode box-drawing characters
    - Spaces only (NO tabs)

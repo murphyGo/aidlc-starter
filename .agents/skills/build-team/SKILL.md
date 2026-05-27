@@ -181,7 +181,17 @@ For multi-instance roles (e.g., `developer × 3`), generate **one** agent file. 
 
 Write `.agents/skills/team-lead/SKILL.md` using the **Team-Lead Skill Template** below. The team-lead is invoked by the user (`/team-lead`), reads project state, and decides between autonomous vs directed mode.
 
-Also write `.agents/agents/team-lead.md` — the team-lead also exists as a subagent so other tooling could invoke it via the Agent tool, but the **primary entry point is the skill**.
+Also write `.agents/agents/team-lead.md` — the team-lead also exists as a subagent so other tooling can discover it, but the **primary entry point is the skill**.
+
+> **⚠️ Nesting constraint (do not bypass):** only the top-level (parent) agent can use the Agent tool. A subagent spawned via the Agent tool **cannot itself spawn further subagents** — the call silently fails. Therefore the team-lead must always run as the **skill** (`/team-lead`, parent context) when it delegates. Never invoke `team-lead` *as a subagent* from inside another agent expecting it to orchestrate; its specialist delegations would be blocked.
+
+**Required:** `team-lead.md` is generated from the Subagent Template (Step 5), but you MUST insert this exact block immediately after its frontmatter (the generic template does not include it):
+
+```markdown
+> ⚠️ **Run via the `/team-lead` skill, not as a nested subagent.** Only a parent agent can spawn subagents. If this file is invoked through the Agent tool, this team-lead's own delegations will silently fail. This `.md` exists for discovery; the skill (`team-lead/SKILL.md`) is the real entry point.
+```
+
+The Team-Lead Skill Template below already carries the equivalent warning, so `team-lead/SKILL.md` is covered automatically.
 
 ### Step 7: Summary and Next Steps
 
@@ -354,6 +364,8 @@ Generate `.agents/skills/team-lead/SKILL.md` with this structure:
 
 Orchestrator for the {{project-name}} agent team. Operates in autonomous (find work) or directed (execute task) mode and delegates to specialist subagents in parallel.
 
+> **⚠️ Run me as a skill, not a nested subagent.** Only a top-level (parent) agent can spawn subagents via the Agent tool. If this team-lead is itself invoked *as a subagent*, its delegations to specialists will silently fail. Always enter via `/team-lead` so this runs in the parent context.
+
 ## Arguments
 
 - `$ARGUMENTS`:
@@ -512,6 +524,7 @@ Also append to `aidlc-docs/audit.md` per AIDLC audit format if any AIDLC stage a
 5. **AIDLC compliance** — for any work that advances an AIDLC stage, the relevant per-stage plan file and `aidlc-state.md` must be updated
 6. **Health check first** — in autonomous mode, run the dev-skill Step 0 health check (TECH-DEBT escalation, pending cross-checks) before proposing work
 7. **Don't impersonate specialists** — if you find yourself implementing code or writing tests directly, stop and delegate
+8. **Bounded delegation** — cap one approved run at a sane fan-out (default: ≤ 5 parallel specialists, ≤ 2 sequential rounds) before returning to the user. If a task needs more, surface that in the plan and get explicit approval rather than expanding silently — this keeps cost and blast radius under user control.
 
 ## Error Handling
 
@@ -545,7 +558,7 @@ Also append to `aidlc-docs/audit.md` per AIDLC audit format if any AIDLC stage a
 5. **AIDLC alignment** — every agent prompt names the artifacts it produces and consumes, with paths.
 6. **Brownfield awareness** — if `IDEA.md` has a "Current State" section, all agents must respect "What Must Not Change" constraints.
 7. **No auto-commit** — the team-lead never commits; it presents synthesis and waits for user approval.
-8. **Korean UX hint** — the project owner often works in Korean. Generated agent prompts should accept Korean input naturally and may surface short Korean summary alongside English when role descriptions are presented to the user. Do not translate AIDLC artifact paths.
+8. **Match the user's language** — respond in whatever language the user writes in; do not hardcode a specific locale. Never translate AIDLC artifact paths or requirement identifiers.
 
 ---
 

@@ -12,8 +12,8 @@
 
 ## Standard ASCII Diagram Patterns
 
-### CRITICAL: Character Width Rule
-**Every line in a box MUST have EXACTLY the same character count (including spaces)**
+### Character Width (alignment)
+**Box lines should be equal width so the right borders line up in a monospace font.** (No need to count characters — just make the corners and right edges align.)
 
 ✅ CORRECT (all lines = 67 chars):
 ```
@@ -107,7 +107,7 @@ Before creating diagrams:
 - [ ] No Unicode box-drawing
 - [ ] Spaces (not tabs) for alignment
 - [ ] Corners use `+`
-- [ ] **ALL box lines same character width** (count characters including spaces)
+- [ ] Box lines equal width (right borders align in monospace)
 - [ ] Test: Verify corners align vertically in monospace font
 
 ## Alternative
