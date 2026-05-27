@@ -245,7 +245,7 @@ Would you like to go with these, or discuss alternatives?"
 ```
 aidlc-starter/
 ├── IDEA.md                    ← USER WRITES HERE (clear, obvious)
-├── .claude/skills/            ← Template infrastructure
+├── .agents/skills/            ← Template infrastructure
 ├── aidlc-workflows/           ← Template infrastructure
 ├── docs/
 │   ├── PROJECT-VISION.md      ← About aidlc-starter (renamed)

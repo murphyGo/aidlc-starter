@@ -122,7 +122,7 @@ AI-DLC Starter is a meta-template that transforms rough ideas into fully-specifi
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Skill format | Markdown with structured sections | Human-readable, Claude-parseable |
-| Skill location | .claude/skills/{name}/SKILL.md | Standard Claude Code convention |
+| Skill location | .agents/skills/{name}/SKILL.md | Agent-agnostic location (works for Claude Code and Codex); `.claude/skills` symlinks here so Claude Code can still discover them |
 | Common vs custom | Templates + generated | Reuse patterns, customize per project |
 | Output templates | Externalized to `init-project/templates/`, loaded just-in-time per step | Keeps the bootstrap skill prompt lean and high-altitude; verbatim artifact boilerplate lives outside the skill and is read only when a step needs it |
 
@@ -172,7 +172,7 @@ aidlc-docs/              ← Stage 1 output (AI-DLC generates)
     ├── functional-design/
     └── nfr-requirements/
 
-.claude/skills/          ← Stage 2 output
+.agents/skills/          ← Stage 2 output
 ├── dev-{name}/SKILL.md  ← Project-specific
 ├── code-review/SKILL.md ← Template
 ├── tech-debt/SKILL.md   ← Template
@@ -265,7 +265,7 @@ aidlc-docs/              ← Stage 1 output (AI-DLC generates)
 
 ### Adding New Skills
 
-1. Create `.claude/skills/{name}/SKILL.md`
+1. Create `.agents/skills/{name}/SKILL.md`
 2. Follow standard structure (Arguments, Objective, Steps)
 3. Document in CLAUDE.md
 

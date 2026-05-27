@@ -123,7 +123,7 @@ A REST API for managing personal book collections
 ```
 project-root/
 ├── CLAUDE.md                    # Project context for Claude
-├── .claude/
+├── .agents/
 │   └── skills/
 │       ├── init-project/SKILL.md
 │       ├── dev-{name}/SKILL.md

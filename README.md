@@ -75,7 +75,7 @@ Claude will:
 Then run `/init-project` as usual — AI-DLC will auto-detect the existing code and run a reverse engineering stage before generating specs.
 
 **Quick setup**: Copy these into your existing project, then run `/start`:
-- `.claude/skills/` directory
+- `.agents/skills/` directory
 - `aidlc-workflows/` directory
 - `docs/references/` directory
 
@@ -156,7 +156,7 @@ aidlc-starter/
 │       ├── code-review-template.md
 │       ├── tech-debt-template.md
 │       └── cross-check-template.md
-├── .claude/
+├── .agents/
 │   └── skills/
 │       ├── start/               # Unified entry point
 │       ├── ideate/              # Idea capture skill
@@ -169,10 +169,10 @@ aidlc-starter/
 ```
 
 After running `/init-project`, your project will have:
-- `.claude/skills/dev-{project}/` - Project-specific development skill
-- `.claude/skills/code-review/` - Code quality checks
-- `.claude/skills/tech-debt/` - Debt management
-- `.claude/skills/cross-check/` - Requirements compliance
+- `.agents/skills/dev-{project}/` - Project-specific development skill
+- `.agents/skills/code-review/` - Code quality checks
+- `.agents/skills/tech-debt/` - Debt management
+- `.agents/skills/cross-check/` - Requirements compliance
 
 ## Feedback Loop
 
